@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" spacing="5" xmlns="http://javafx.com/javafx/25.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="by.gsu.olaksen.controller.MainController">
+
+    <MenuBar VBox.vgrow="NEVER">
+        <Menu mnemonicParsing="false" text="Файл">
+            <MenuItem mnemonicParsing="false" text="Quit"/>
+        </Menu>
+        <Menu fx:id="loginMenu" mnemonicParsing="false" text="Логин">
+            <MenuItem fx:id="currentUserMenuItem" disable="true" text="Текущий пользователь:"/>
+            <MenuItem fx:id="logoutMenuItem" onAction="#onLogout" text="Сменить пользователя"/>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Помощь">
+            <MenuItem mnemonicParsing="false" text="About MyHelloApp"/>
+        </Menu>
+    </MenuBar>
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <Tab text="Зал">
+            <fx:include source="room_tab.fxml"/>
+        </Tab>
+        <Tab text="Аренда">
+            <AnchorPane/>
+        </Tab>
+        <Tab text="Настольные игры">
+            <AnchorPane>
+                <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                      AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                    <TableView fx:id="tabletops" VBox.vgrow="ALWAYS" editable="true">
+                        <columns>
+                            <TableColumn fx:id="tabletopId" text="Номер" editable="false"/>
+                            <TableColumn fx:id="tabletopName" text="Наименование"/>
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10" alignment="CENTER">
+                        <TextField fx:id="idField" promptText="Номер"/>
+                        <TextField fx:id="nameField" promptText="Наименование"/>
+                        <Button fx:id="addButton" text="Добавить" onAction="#onAdd"/>
+                        <Button fx:id="deleteButton" text="Удалить" onAction="#onDelete"/>
+                    </HBox>
+                </VBox>
+            </AnchorPane>
+        </Tab>
+    </TabPane>
+    <Label fx:id="roleLabel" translateX="10"/>
+</VBox>
