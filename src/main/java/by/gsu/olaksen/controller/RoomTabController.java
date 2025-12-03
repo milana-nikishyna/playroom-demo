@@ -32,7 +32,7 @@ public class RoomTabController {
         datePicker.setValue(LocalDate.now());
 
         // Запрет на выбор прошлых дат
-        datePicker.setDayCellFactory(picker -> new DateCell() {
+        datePicker.setDayCellFactory(_ -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
@@ -45,8 +45,8 @@ public class RoomTabController {
         roomStatusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
 
         // Слушатели на смену даты и комнаты
-        datePicker.valueProperty().addListener((obs, oldDate, newDate) -> updateRoomTable());
-        roomTabPane.getSelectionModel().selectedIndexProperty().addListener((obs, oldIdx, newIdx) -> updateRoomTable());
+        datePicker.valueProperty().addListener((_, _, _) -> updateRoomTable());
+        roomTabPane.getSelectionModel().selectedIndexProperty().addListener((_, _, _) -> updateRoomTable());
 
         // Инициализация таблицы
         updateRoomTable();
@@ -66,9 +66,9 @@ public class RoomTabController {
         LocalDate date = datePicker.getValue();
         int roomIdx = roomTabPane.getSelectionModel().getSelectedIndex();
         ObservableList<RoomBookingSlot> slots = switch (roomIdx) {
-            case 0 -> room1Bookings.computeIfAbsent(date, d -> generateSlots());
-            case 1 -> room2Bookings.computeIfAbsent(date, d -> generateSlots());
-            case 2 -> room3Bookings.computeIfAbsent(date, d -> generateSlots());
+            case 0 -> room1Bookings.computeIfAbsent(date, _ -> generateSlots());
+            case 1 -> room2Bookings.computeIfAbsent(date, _ -> generateSlots());
+            case 2 -> room3Bookings.computeIfAbsent(date, _ -> generateSlots());
             default -> FXCollections.observableArrayList();
         };
         roomTable.setItems(slots);
