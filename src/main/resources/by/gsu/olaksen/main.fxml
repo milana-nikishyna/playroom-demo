@@ -8,11 +8,11 @@
 
     <MenuBar VBox.vgrow="NEVER">
         <Menu mnemonicParsing="false" text="Файл">
-            <MenuItem mnemonicParsing="false" text="Quit"/>
+            <MenuItem mnemonicParsing="false" text="Выход" onAction="#onExit"/>
         </Menu>
-        <Menu fx:id="loginMenu" mnemonicParsing="false" text="Логин">
+        <Menu mnemonicParsing="false" text="Логин">
             <MenuItem fx:id="currentUserMenuItem" disable="true" text="Текущий пользователь:"/>
-            <MenuItem fx:id="logoutMenuItem" onAction="#onLogout" text="Сменить пользователя"/>
+            <MenuItem onAction="#onLogout" text="Сменить пользователя"/>
         </Menu>
         <Menu mnemonicParsing="false" text="Помощь">
             <MenuItem mnemonicParsing="false" text="About MyHelloApp"/>
@@ -24,26 +24,10 @@
             <fx:include source="room_tab.fxml"/>
         </Tab>
         <Tab text="Аренда">
-            <AnchorPane/>
+            <fx:include source="rent_tab.fxml"/>
         </Tab>
         <Tab text="Настольные игры">
-            <AnchorPane>
-                <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-                      AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-                    <TableView fx:id="tabletops" VBox.vgrow="ALWAYS" editable="true">
-                        <columns>
-                            <TableColumn fx:id="tabletopId" text="Номер" editable="false"/>
-                            <TableColumn fx:id="tabletopName" text="Наименование"/>
-                        </columns>
-                    </TableView>
-                    <HBox spacing="10" alignment="CENTER">
-                        <TextField fx:id="idField" promptText="Номер"/>
-                        <TextField fx:id="nameField" promptText="Наименование"/>
-                        <Button fx:id="addButton" text="Добавить" onAction="#onAdd"/>
-                        <Button fx:id="deleteButton" text="Удалить" onAction="#onDelete"/>
-                    </HBox>
-                </VBox>
-            </AnchorPane>
+            <fx:include source="tabletop_tab.fxml"/>
         </Tab>
     </TabPane>
     <Label fx:id="roleLabel" translateX="10"/>

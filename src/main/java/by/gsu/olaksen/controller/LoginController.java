@@ -1,5 +1,6 @@
 package by.gsu.olaksen.controller;
 
+import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.service.UserService;
 import by.gsu.olaksen.model.User;
 import javafx.fxml.FXML;
@@ -21,6 +22,7 @@ public class LoginController {
         String username = usernameField.getText();
         String password = passwordField.getText();
         User user = userService.authenticate(username, password);
+        Session.getInstance().setUser(user);
 
         if (user != null) {
             try {
@@ -29,6 +31,7 @@ public class LoginController {
                 Parent root = loader.load();
 
                 MainController mainController = loader.getController();
+
                 mainController.setUser(user);
 
                 Stage stage = (Stage) usernameField.getScene().getWindow();

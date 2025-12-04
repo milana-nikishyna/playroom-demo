@@ -17,7 +17,6 @@
             <RowConstraints minHeight="40" vgrow="NEVER"/>
         </rowConstraints>
 
-        <!-- DatePicker с фиксированной шириной -->
         <DatePicker fx:id="datePicker" GridPane.rowIndex="0" GridPane.columnIndex="0" prefWidth="160" maxWidth="160" minWidth="160"/>
         <TabPane fx:id="roomTabPane" tabClosingPolicy="UNAVAILABLE" GridPane.rowIndex="1" GridPane.columnIndex="0"
                  maxWidth="Infinity">
@@ -32,8 +31,8 @@
             </columns>
         </TableView>
         <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="0" maxWidth="Infinity">
-            <Button fx:id="confirmButton" text="Подтвердить бронь" onAction="#onConfirm"/>
-            <Button fx:id="cancelButton" text="Отменить бронь" onAction="#onCancel"/>
+            <Button text="Подтвердить бронь" onAction="#onConfirm"/>
+            <Button text="Отменить бронь" onAction="#onCancel"/>
         </HBox>
     </GridPane>
 </AnchorPane>

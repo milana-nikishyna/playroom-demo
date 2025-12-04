@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableTopRepository {
-    private static final String URL = AppConfig.INSTANCE.getDbProperty("url");
-    private static final String USER = AppConfig.INSTANCE.getDbProperty("user");
-    private static final String PASSWORD = AppConfig.INSTANCE.getDbProperty("password");
+    private static final String URL = AppConfig.getInstance().getDbProperty("url");
+    private static final String USER = AppConfig.getInstance().getDbProperty("user");
+    private static final String PASSWORD = AppConfig.getInstance().getDbProperty("password");
 
     public TableTopRepository() {
         initDb();

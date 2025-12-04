@@ -1,5 +1,6 @@
 package by.gsu.olaksen.config;
 
+import by.gsu.olaksen.model.Role;
 import by.gsu.olaksen.model.User;
 import org.yaml.snakeyaml.Yaml;
 
@@ -23,7 +24,7 @@ public enum AppConfig {
                     .map(map -> new User(
                             map.get("username"),
                             map.get("password"),
-                            map.get("role")
+                            Role.valueOf(map.get("role"))
                     )).toList();
 
             this.dbProperties = dbYaml.load(dbConfig);
@@ -38,6 +39,10 @@ public enum AppConfig {
 
     public List<User> getUsers() {
         return users;
+    }
+
+    public static AppConfig getInstance() {
+        return INSTANCE;
     }
 
 }

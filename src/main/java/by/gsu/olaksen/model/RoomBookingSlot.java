@@ -9,7 +9,15 @@ public class RoomBookingSlot {
         this.status = status;
     }
 
-    public String getHour() { return hour; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getHour() {
+        return hour;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

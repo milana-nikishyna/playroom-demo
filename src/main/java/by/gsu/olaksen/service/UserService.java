@@ -5,8 +5,8 @@ import by.gsu.olaksen.model.User;
 
 public class UserService {
     public User authenticate(String username, String password) {
-        return AppConfig.INSTANCE.getUsers().stream()
-                .filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password))
+        return AppConfig.getInstance().getUsers().stream()
+                .filter(u -> u.username().equals(username) && u.password().equals(password))
                 .findFirst()
                 .orElse(null);
     }

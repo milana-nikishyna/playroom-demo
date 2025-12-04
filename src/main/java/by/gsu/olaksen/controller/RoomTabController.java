@@ -18,10 +18,7 @@ public class RoomTabController {
     @FXML private TableView<RoomBookingSlot> roomTable;
     @FXML private TableColumn<RoomBookingSlot, String> roomHourColumn;
     @FXML private TableColumn<RoomBookingSlot, String> roomStatusColumn;
-    @FXML private Button confirmButton;
-    @FXML private Button cancelButton;
 
-    // Для каждой комнаты — Map<LocalDate, ObservableList<RoomBookingSlot>>
     private final Map<LocalDate, ObservableList<RoomBookingSlot>> room1Bookings = new HashMap<>();
     private final Map<LocalDate, ObservableList<RoomBookingSlot>> room2Bookings = new HashMap<>();
     private final Map<LocalDate, ObservableList<RoomBookingSlot>> room3Bookings = new HashMap<>();
