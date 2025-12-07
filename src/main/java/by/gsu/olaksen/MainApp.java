@@ -15,8 +15,4 @@ public class MainApp extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
-
-    static void main() {
-        launch();
-    }
 }

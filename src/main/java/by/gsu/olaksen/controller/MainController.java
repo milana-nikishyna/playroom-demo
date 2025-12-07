@@ -8,11 +8,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainController {
 
-    @FXML private Label roleLabel;
-    @FXML private MenuItem currentUserMenuItem;
+    public static final Logger logger = LoggerFactory.getLogger(MainController.class);
+
+    @FXML
+    private Label roleLabel;
+    @FXML
+    private MenuItem currentUserMenuItem;
 
     public void setUser(User user) {
         roleLabel.setText("Ваша роль: " + user.role());
@@ -29,7 +35,7 @@ public class MainController {
             stage.setScene(new Scene(root));
             stage.setTitle("Вход");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("onLogout error", e);
         }
     }
 
