@@ -18,7 +18,7 @@ public class TableTopRepository {
 
     private void initDb() {
         String sql = "CREATE TABLE IF NOT EXISTS tabletops (" +
-                "id BIGINT PRIMARY KEY, " +
+                "id INTEGER PRIMARY KEY NOT NULL, " +
                 "name VARCHAR(255) NOT NULL)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              Statement stmt = conn.createStatement()) {
@@ -35,7 +35,7 @@ public class TableTopRepository {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                result.add(new TableTop(rs.getLong("id"), rs.getString("name")));
+                result.add(new TableTop(rs.getInt("id"), rs.getString("name")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -43,15 +43,18 @@ public class TableTopRepository {
         return result;
     }
 
-    public void addTableTop(TableTop tabletop) {
-        String sql = "INSERT INTO tabletops (id, name) VALUES (?, ?)";
+    public int addTableTop(TableTop tabletop) {
+        String sql = "INSERT INTO tabletops (name) VALUES (?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, tabletop.getTabletopId());
-            ps.setString(2, tabletop.getTabletopName());
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, tabletop.getTabletopName());
             ps.executeUpdate();
+			var rs = ps.getGeneratedKeys();
+			rs.next();
+			return rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
+            return 0;
         }
     }
 
@@ -60,18 +63,18 @@ public class TableTopRepository {
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tabletop.getTabletopName());
-            ps.setLong(2, tabletop.getTabletopId());
+            ps.setInt(2, tabletop.getTabletopId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteTableTop(Long id) {
+    public void deleteTableTop(int id) {
         String sql = "DELETE FROM tabletops WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, id);
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

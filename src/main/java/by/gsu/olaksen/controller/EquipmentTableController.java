@@ -1,7 +1,8 @@
 package by.gsu.olaksen.controller;
 
 import by.gsu.olaksen.model.Session;
-import by.gsu.olaksen.model.RentItem;
+import by.gsu.olaksen.db.EquipmentRepository;
+import by.gsu.olaksen.model.Equipment;
 import by.gsu.olaksen.model.Role;
 import by.gsu.olaksen.model.User;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,28 +16,31 @@ import javafx.scene.input.MouseButton;
 
 public class EquipmentTableController {
     @FXML
-    private TableView<RentItem> equipmentTable;
+    private TableView<Equipment> equipmentTable;
     @FXML
-    private TableColumn<RentItem, String> modelColumn;
+    private TableColumn<Equipment, String> modelColumn;
     @FXML
-    private TableColumn<RentItem, String> statusColumn;
+    private TableColumn<Equipment, String> statusColumn;
     @FXML
-    private TableColumn<RentItem, String> termColumn;
+    private TableColumn<Equipment, String> termColumn;
     @FXML
     private TextField addModelField;
     @FXML
     private Button addButton;
 
     private final ObservableList<String> statuses = FXCollections.observableArrayList("Свободно", "В аренде");
-    private ObservableList<RentItem> items = FXCollections.observableArrayList();
+    private ObservableList<Equipment> items = FXCollections.observableArrayList();
     private boolean isAdmin = false;
+    private final EquipmentRepository repository = new EquipmentRepository();
 
     @FXML
     public void initialize() {
+        //TODO: update table ui
         setUser(Session.getInstance().getUser());
         modelColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getModel()));
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
         termColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerm()));
+
 
         statusColumn.setCellFactory(ComboBoxTableCell.forTableColumn(statuses));
         statusColumn.setOnEditCommit(event -> {
@@ -44,10 +48,10 @@ public class EquipmentTableController {
             equipmentTable.refresh();
         });
 
-        equipmentTable.setItems(items);
+        equipmentTable.setItems(repository.getAll());
 
         equipmentTable.setRowFactory(_ -> {
-            TableRow<RentItem> row = new TableRow<>();
+            TableRow<Equipment> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (isAdmin && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 && row.isEmpty()) {
                     addNewItem();
@@ -78,7 +82,7 @@ public class EquipmentTableController {
         setAdmin(Role.ADMIN == user.role());
     }
 
-    public void setItems(ObservableList<RentItem> items) {
+    public void setItems(ObservableList<Equipment> items) {
         this.items = items;
         equipmentTable.setItems(items);
     }
@@ -86,14 +90,15 @@ public class EquipmentTableController {
     @FXML
     private void onAdd() {
         if (isAdmin && addModelField.getText() != null && !addModelField.getText().isBlank()) {
-            items.add(new RentItem(addModelField.getText(), "Свободно", ""));
+            repository.add(new Equipment(addModelField.getText(), "Свободно", ""));
+            items.add(new Equipment(addModelField.getText(), "Свободно", ""));
             addModelField.clear();
         }
     }
 
     private void addNewItem() {
         if (isAdmin) {
-            RentItem newItem = new RentItem("Новая модель", "Свободно", "");
+            Equipment newItem = new Equipment("Новая модель", "Свободно", "");
             items.add(newItem);
             equipmentTable.getSelectionModel().select(newItem);
             equipmentTable.scrollTo(newItem);

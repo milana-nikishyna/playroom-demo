@@ -14,7 +14,7 @@
             </columns>
         </TableView>
         <HBox spacing="10" alignment="CENTER">
-            <TextField fx:id="idField" promptText="Номер"/>
+            
             <TextField fx:id="nameField" promptText="Наименование"/>
             <Button fx:id="addButton" text="Добавить" onAction="#onAdd"/>
             <Button fx:id="deleteButton" text="Удалить" onAction="#onDelete"/>

@@ -1,15 +1,19 @@
 package by.gsu.olaksen.model;
 
 public class TableTop {
-    private Long tabletopId;
+    private int tabletopId;
     private String tabletopName;
 
-    public TableTop(Long tabletopId, String tabletopName) {
+    public TableTop(int tabletopId, String tabletopName) {
         this.tabletopId = tabletopId;
         this.tabletopName = tabletopName;
     }
+	
+	public TableTop(String tabletopName) {
+        this.tabletopName = tabletopName;
+    }
 
-    public Long getTabletopId() {
+    public int getTabletopId() {
         return tabletopId;
     }
 
@@ -17,7 +21,7 @@ public class TableTop {
         return tabletopName;
     }
 
-    public void setTabletopId(Long tabletopId) {
+    public void setTabletopId(int tabletopId) {
         this.tabletopId = tabletopId;
     }
 

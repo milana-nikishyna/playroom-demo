@@ -24,7 +24,7 @@ public enum AppConfig {
                     .map(map -> new User(
                             map.get("username"),
                             map.get("password"),
-                            Role.valueOf(map.get("role"))
+                            Role.valueOf(map.get("role").toUpperCase())
                     )).toList();
 
             this.dbProperties = dbYaml.load(dbConfig);

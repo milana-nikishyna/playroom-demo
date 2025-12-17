@@ -16,6 +16,7 @@
         <HBox spacing="10">
             <TextField fx:id="addModelField" promptText="Модель/Название"/>
             <Button fx:id="addButton" text="Добавить" onAction="#onAdd"/>
+			<Button text="Удалить" />
         </HBox>
     </VBox>
 </AnchorPane>

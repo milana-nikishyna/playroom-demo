@@ -1,11 +1,19 @@
 package by.gsu.olaksen.model;
 
-public class RentItem {
+public class Equipment {
+    private int id;
     private String model;
     private String status;
     private String term;
 
-    public RentItem(String model, String status, String term) {
+    public Equipment(String model, String status, String term) {
+        this.model = model;
+        this.status = status;
+        this.term = term;
+    }
+
+        public Equipment(int id, String model, String status, String term) {
+        this.id = id;
         this.model = model;
         this.status = status;
         this.term = term;
@@ -34,4 +42,9 @@ public class RentItem {
     public void setTerm(String term) {
         this.term = term;
     }
+
+    public int getId() {
+        return id;
+    }
+
 }

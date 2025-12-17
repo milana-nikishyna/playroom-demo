@@ -1,6 +1,6 @@
 package by.gsu.olaksen.controller;
 
-import by.gsu.olaksen.model.RentItem;
+import by.gsu.olaksen.model.Equipment;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,17 +14,17 @@ public class RentTabController {
     @FXML private Tab gameTab;
     @FXML private Tab gamepadTab;
 
-    private final ObservableList<RentItem> consoles = FXCollections.observableArrayList(
-            new RentItem("PS5", "Свободно", ""),
-            new RentItem("Xbox Series X", "В аренде", "до 2025-12-10")
+    private final ObservableList<Equipment> consoles = FXCollections.observableArrayList(
+            new Equipment("PS5", "Свободно", ""),
+            new Equipment("Xbox Series X", "В аренде", "до 2025-12-10")
     );
-    private final ObservableList<RentItem> games = FXCollections.observableArrayList(
-            new RentItem("FIFA 23", "Свободно", ""),
-            new RentItem("Cyberpunk 2077", "В аренде", "до 2025-12-08")
+    private final ObservableList<Equipment> games = FXCollections.observableArrayList(
+            new Equipment("FIFA 23", "Свободно", ""),
+            new Equipment("Cyberpunk 2077", "В аренде", "до 2025-12-08")
     );
-    private final ObservableList<RentItem> gamepads = FXCollections.observableArrayList(
-            new RentItem("DualSense", "Свободно", ""),
-            new RentItem("Xbox Wireless", "В аренде", "до 2025-12-09")
+    private final ObservableList<Equipment> gamepads = FXCollections.observableArrayList(
+            new Equipment("DualSense", "Свободно", ""),
+            new Equipment("Xbox Wireless", "В аренде", "до 2025-12-09")
     );
 
     @FXML

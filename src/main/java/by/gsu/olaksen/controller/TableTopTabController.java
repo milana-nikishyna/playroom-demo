@@ -18,8 +18,7 @@ public class TableTopTabController {
     private TableColumn<TableTop, Long> tabletopId;
     @FXML
     private TableColumn<TableTop, String> tabletopName;
-    @FXML
-    private TextField idField;
+
     @FXML
     private TextField nameField;
     @FXML
@@ -59,7 +58,7 @@ public class TableTopTabController {
     private void setAdmin(boolean isAdmin) {
         addButton.setDisable(!isAdmin);
         deleteButton.setDisable(!isAdmin);
-        idField.setDisable(!isAdmin);
+       
         nameField.setDisable(!isAdmin);
         tabletops.setEditable(isAdmin);
         tabletopName.setEditable(isAdmin);
@@ -68,12 +67,11 @@ public class TableTopTabController {
     @FXML
     private void onAdd() {
         try {
-            Long id = Long.parseLong(idField.getText());
-            String name = nameField.getText();
-            TableTop tabletop = new TableTop(id, name);
-            repository.addTableTop(tabletop);
+            var name = nameField.getText();
+            var tabletop = new TableTop(name);
+            var id = repository.addTableTop(tabletop);
+            tabletop.setTabletopId(id);
             tabletops.getItems().add(tabletop);
-            idField.clear();
             nameField.clear();
         } catch (NumberFormatException e) {
             e.printStackTrace();
