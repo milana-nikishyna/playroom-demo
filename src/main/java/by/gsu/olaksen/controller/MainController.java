@@ -32,7 +32,9 @@ public class MainController {
         try {
             Stage stage = (Stage) roleLabel.getScene().getWindow();
             Parent root = FXMLLoader.load(getClass().getResource("../login.fxml"));
-            stage.setScene(new Scene(root));
+            var scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
+            stage.setScene(scene);
             stage.setTitle("Вход");
         } catch (Exception e) {
             logger.error("onLogout error", e);

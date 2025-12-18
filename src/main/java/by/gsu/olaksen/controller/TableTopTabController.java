@@ -56,10 +56,16 @@ public class TableTopTabController {
     }
 
     private void setAdmin(boolean isAdmin) {
-        addButton.setDisable(!isAdmin);
-        deleteButton.setDisable(!isAdmin);
-       
-        nameField.setDisable(!isAdmin);
+        // скрываем поля добавления/удаления для user
+        if (addButton != null) {
+            addButton.setVisible(isAdmin);
+        }
+        if (deleteButton != null) {
+            deleteButton.setVisible(isAdmin);
+        }
+        if (nameField != null) {
+            nameField.setVisible(isAdmin);
+        }
         tabletops.setEditable(isAdmin);
         tabletopName.setEditable(isAdmin);
     }

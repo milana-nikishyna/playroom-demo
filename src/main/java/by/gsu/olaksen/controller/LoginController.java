@@ -22,9 +22,9 @@ public class LoginController {
         String username = usernameField.getText();
         String password = passwordField.getText();
         User user = userService.authenticate(username, password);
-        Session.getInstance().setUser(user);
 
         if (user != null) {
+            Session.getInstance().setUser(user);
             try {
 
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("../main.fxml"));
@@ -35,8 +35,10 @@ public class LoginController {
                 mainController.setUser(user);
 
                 Stage stage = (Stage) usernameField.getScene().getWindow();
-                stage.setScene(new Scene(root));
+                var scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
                 stage.setTitle("Учёт");
+                stage.setScene(scene);
             } catch (Exception e) {
                 e.printStackTrace();
             }

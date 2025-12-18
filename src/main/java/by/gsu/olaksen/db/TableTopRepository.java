@@ -49,13 +49,15 @@ public class TableTopRepository {
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, tabletop.getTabletopName());
             ps.executeUpdate();
-			var rs = ps.getGeneratedKeys();
-			rs.next();
-			return rs.getInt(1);
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return 0;
         }
+        return 0;
     }
 
     public void updateTableTop(TableTop tabletop) {

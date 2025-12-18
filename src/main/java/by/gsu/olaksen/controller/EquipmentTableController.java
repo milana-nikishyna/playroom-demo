@@ -24,31 +24,53 @@ public class EquipmentTableController {
     @FXML
     private TableColumn<Equipment, String> termColumn;
     @FXML
+    private TableColumn<Equipment, String> priceColumn;
+    @FXML
     private TextField addModelField;
     @FXML
     private Button addButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private ComboBox<Integer> rentHoursCombo;
+    @FXML
+    private Button rentButton;
+    @FXML
+    private Button cancelRentButton;
 
     private final ObservableList<String> statuses = FXCollections.observableArrayList("Свободно", "В аренде");
-    private ObservableList<Equipment> items = FXCollections.observableArrayList();
+    private final ObservableList<Equipment> items = FXCollections.observableArrayList();
     private boolean isAdmin = false;
     private final EquipmentRepository repository = new EquipmentRepository();
+    /**
+     * Logical type of equipment for this table instance
+     * (e.g. "console", "game", "gamepad").
+     * If null, table shows all equipment.
+     */
+    private String equipmentType;
 
     @FXML
     public void initialize() {
-        //TODO: update table ui
         setUser(Session.getInstance().getUser());
         modelColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getModel()));
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
         termColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerm()));
+        priceColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.valueOf(cellData.getValue().getPricePerHour())));
 
 
         statusColumn.setCellFactory(ComboBoxTableCell.forTableColumn(statuses));
         statusColumn.setOnEditCommit(event -> {
-            event.getRowValue().setStatus(event.getNewValue());
+            Equipment equipment = event.getRowValue();
+            equipment.setStatus(event.getNewValue());
+            // persist change
+            repository.update(equipment);
             equipmentTable.refresh();
         });
 
-        equipmentTable.setItems(repository.getAll());
+        // default: load all equipment from DB into observable list
+        items.setAll(repository.getAll());
+        equipmentTable.setItems(items);
 
         equipmentTable.setRowFactory(_ -> {
             TableRow<Equipment> row = new TableRow<>();
@@ -61,10 +83,51 @@ public class EquipmentTableController {
         });
 
         modelColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        modelColumn.setOnEditCommit(event -> event.getRowValue().setModel(event.getNewValue()));
+        modelColumn.setOnEditCommit(event -> {
+            Equipment equipment = event.getRowValue();
+            equipment.setModel(event.getNewValue());
+            repository.update(equipment);
+        });
 
         termColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        termColumn.setOnEditCommit(event -> event.getRowValue().setTerm(event.getNewValue()));
+        termColumn.setOnEditCommit(event -> {
+            Equipment equipment = event.getRowValue();
+            equipment.setTerm(event.getNewValue());
+            repository.update(equipment);
+        });
+
+        // цена/час редактируется только админом; простое текстовое представление числа
+        priceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        priceColumn.setOnEditCommit(event -> {
+            Equipment equipment = event.getRowValue();
+            try {
+                double newPrice = Double.parseDouble(event.getNewValue());
+                equipment.setPricePerHour(newPrice);
+                repository.update(equipment);
+            } catch (NumberFormatException e) {
+                // игнорируем неверный ввод, откатываем визуально
+                equipmentTable.refresh();
+            }
+        });
+
+        // заполнение списка часов аренды (1..12)
+        if (rentHoursCombo != null) {
+            rentHoursCombo.getItems().setAll(1,2,3,4,5,6,7,8,9,10,11,12);
+            rentHoursCombo.setVisible(false); // скрываем по умолчанию
+        }
+        if (rentButton != null) {
+            rentButton.setDisable(true);
+        }
+        if (cancelRentButton != null) {
+            cancelRentButton.setDisable(true);
+        }
+
+        equipmentTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            updateRentControlsState();
+        });
+        if (rentHoursCombo != null) {
+            rentHoursCombo.valueProperty().addListener((obs, oldVal, newVal) -> updateRentControlsState());
+        }
 
     }
 
@@ -74,34 +137,146 @@ public class EquipmentTableController {
         statusColumn.setEditable(isAdmin);
         modelColumn.setEditable(isAdmin);
         termColumn.setEditable(isAdmin);
-        addButton.setDisable(!isAdmin);
-        addModelField.setDisable(!isAdmin);
+        // скрываем поля добавления/удаления для user
+        if (addButton != null) {
+            addButton.setVisible(isAdmin);
+        }
+        if (addModelField != null) {
+            addModelField.setVisible(isAdmin);
+        }
+        if (deleteButton != null) {
+            deleteButton.setVisible(isAdmin);
+        }
+        if (rentButton != null) {
+            // аренда доступна всем, но кнопка может блокироваться логикой ниже
+            updateRentControlsState();
+        }
+        if (cancelRentButton != null) {
+            updateRentControlsState();
+        }
     }
 
     public void setUser(User user) {
         setAdmin(Role.ADMIN == user.role());
     }
 
-    public void setItems(ObservableList<Equipment> items) {
-        this.items = items;
-        equipmentTable.setItems(items);
+    /**
+     * Configure this table to show only a specific equipment type.
+     * Used by tabs like consoles/games/gamepads.
+     */
+    public void loadEquipmentByType(String type) {
+        this.equipmentType = type;
+        items.setAll(repository.getByType(type));
     }
 
     @FXML
     private void onAdd() {
         if (isAdmin && addModelField.getText() != null && !addModelField.getText().isBlank()) {
-            repository.add(new Equipment(addModelField.getText(), "Свободно", ""));
-            items.add(new Equipment(addModelField.getText(), "Свободно", ""));
+            String type = equipmentType != null ? equipmentType : "Оборудование";
+            Equipment equipment = new Equipment(addModelField.getText(), "Свободно", "", type);
+            int id = repository.add(equipment);
+            // store DB-generated id in object for future updates/deletes
+            equipment.setId(id);
+            items.add(equipment);
             addModelField.clear();
         }
     }
 
     private void addNewItem() {
         if (isAdmin) {
-            Equipment newItem = new Equipment("Новая модель", "Свободно", "");
+            String type = equipmentType != null ? equipmentType : "Оборудование";
+            Equipment newItem = new Equipment("Новая модель", "Свободно", "", type);
+            int id = repository.add(newItem);
+            newItem.setId(id);
             items.add(newItem);
             equipmentTable.getSelectionModel().select(newItem);
             equipmentTable.scrollTo(newItem);
+        }
+    }
+
+    @FXML
+    private void onDelete() {
+        if (!isAdmin) {
+            return;
+        }
+        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            repository.delete(selected.getId());
+            items.remove(selected);
+        }
+    }
+
+    @FXML
+    private void onRent() {
+        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
+        Integer hours = rentHoursCombo != null ? rentHoursCombo.getValue() : null;
+        if (selected == null || hours == null) {
+            return;
+        }
+        if (!"Свободно".equals(selected.getStatus())) {
+            return;
+        }
+
+        double pricePerHour = selected.getPricePerHour();
+        double total = pricePerHour * hours;
+
+        selected.setStatus("В аренде");
+        var endTime = java.time.LocalDateTime.now().plusHours(hours);
+        var formatter = java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        selected.setTerm("до " + endTime.format(formatter));
+
+        repository.update(selected);
+        equipmentTable.refresh();
+        updateRentControlsState();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Аренда оборудования");
+        alert.setHeaderText(null);
+        alert.setContentText("Оборудование арендовано.\nЦена за час: " + pricePerHour +
+                "\nЧасов: " + hours +
+                "\nИтого: " + total);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void onCancelRent() {
+        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        if (!"В аренде".equals(selected.getStatus())) {
+            return;
+        }
+
+        selected.setStatus("Свободно");
+        selected.setTerm("");
+        repository.update(selected);
+        equipmentTable.refresh();
+        updateRentControlsState();
+    }
+
+    private void updateRentControlsState() {
+        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
+        boolean isFree = selected != null && "Свободно".equals(selected.getStatus());
+        boolean isRented = selected != null && "В аренде".equals(selected.getStatus());
+
+        // дропдаун виден и активен только для свободного оборудования
+        if (rentHoursCombo != null) {
+            rentHoursCombo.setVisible(isFree);
+            rentHoursCombo.setDisable(!isFree);
+            if (!isFree && rentHoursCombo.getValue() != null) {
+                rentHoursCombo.setValue(null); // сбрасываем значение при скрытии
+            }
+        }
+
+        Integer hours = rentHoursCombo != null ? rentHoursCombo.getValue() : null;
+        boolean canRent = isFree && hours != null;
+
+        if (rentButton != null) {
+            rentButton.setDisable(!canRent);
+        }
+        if (cancelRentButton != null) {
+            cancelRentButton.setDisable(!isRented);
         }
     }
 }

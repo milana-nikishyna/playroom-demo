@@ -9,8 +9,8 @@
           AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <TableView fx:id="tabletops" VBox.vgrow="ALWAYS" editable="true">
             <columns>
-                <TableColumn fx:id="tabletopId" text="Номер" editable="false"/>
-                <TableColumn fx:id="tabletopName" text="Наименование"/>
+                <TableColumn fx:id="tabletopId" text="Номер" editable="false" prefWidth="80.0"/>
+                <TableColumn fx:id="tabletopName" text="Наименование" prefWidth="200.0"/>
             </columns>
         </TableView>
         <HBox spacing="10" alignment="CENTER">

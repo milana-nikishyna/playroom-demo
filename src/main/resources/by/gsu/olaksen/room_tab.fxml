@@ -26,8 +26,8 @@
         </TabPane>
         <TableView fx:id="roomTable" GridPane.rowIndex="2" GridPane.columnIndex="0" maxWidth="Infinity" maxHeight="Infinity">
             <columns>
-                <TableColumn fx:id="roomHourColumn" text="Час"/>
-                <TableColumn fx:id="roomStatusColumn" text="Статус"/>
+                <TableColumn fx:id="roomHourColumn" text="Час" prefWidth="80.0"/>
+                <TableColumn fx:id="roomStatusColumn" text="Статус" prefWidth="200.0"/>
             </columns>
         </TableView>
         <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="0" maxWidth="Infinity">
