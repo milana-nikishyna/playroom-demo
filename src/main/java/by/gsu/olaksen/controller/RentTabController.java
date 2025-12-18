@@ -15,16 +15,16 @@ public class RentTabController {
     @FXML private Tab gamepadTab;
 
     private final ObservableList<Equipment> consoles = FXCollections.observableArrayList(
-            new Equipment("PS5", "Свободно", ""),
-            new Equipment("Xbox Series X", "В аренде", "до 2025-12-10")
+            new Equipment("PS5", "Свободно", "", "Консоль"),
+            new Equipment("Xbox Series X", "В аренде", "до 2025-12-10", "Консоль")
     );
     private final ObservableList<Equipment> games = FXCollections.observableArrayList(
-            new Equipment("FIFA 23", "Свободно", ""),
-            new Equipment("Cyberpunk 2077", "В аренде", "до 2025-12-08")
+            new Equipment("FIFA 23", "Свободно", "", "Игра"),
+            new Equipment("Cyberpunk 2077", "В аренде", "до 2025-12-08", "Игра")
     );
     private final ObservableList<Equipment> gamepads = FXCollections.observableArrayList(
-            new Equipment("DualSense", "Свободно", ""),
-            new Equipment("Xbox Wireless", "В аренде", "до 2025-12-09")
+            new Equipment("DualSense", "Свободно", "", "Геймпад"),
+            new Equipment("Xbox Wireless", "В аренде", "до 2025-12-09", "Геймпад")
     );
 
     @FXML

@@ -23,10 +23,11 @@ public class EquipmentRepository {
 
     private void initDb() {
         String sql = "CREATE TABLE IF NOT EXISTS equipment (" +
-                "id INTEGER PRIMARY KEY NOT NULL, " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "model VARCHAR(255) NOT NULL, " +
                 "available BOOL NOT NULL, " +
-                "notes VARCHAR(255) " +
+                "notes VARCHAR(255), " +
+                "type VARCHAR(50) NOT NULL " +
                 ")";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                 var stmt = conn.createStatement()) {
@@ -37,21 +38,15 @@ public class EquipmentRepository {
     }
 
     public int add(Equipment equipment) {
-        String sql = "INSERT INTO equipment (model, available, notes) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO equipment (model, available, notes, type) VALUES (?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                    var status = equipment.getStatus();
-                    boolean isAvailable;
-                    switch (status) {
-                        case "Свободно" -> isAvailable = true;
-                        default -> isAvailable = false;
-                    }
+            var status = equipment.getStatus();
+            boolean isAvailable = "Свободно".equals(status);
             ps.setString(1, equipment.getModel());
             ps.setBoolean(2, isAvailable);
             ps.setString(3, equipment.getTerm());
-            
-
-
+            ps.setString(4, equipment.getType());
             ps.executeUpdate();
             var rs = ps.getGeneratedKeys();
             rs.next();
@@ -62,19 +57,79 @@ public class EquipmentRepository {
         }
     }
 
-        public List<Equipment> getAll() {
+    public List<Equipment> getAll() {
         List<Equipment> result = new ArrayList<>();
-        String sql = "SELECT id, model, available, notes FROM equipment";
+        String sql = "SELECT id, model, available, notes, type FROM equipment";
         try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                result.add(new Equipment(rs.getInt("id"), rs.getString("model"), String.valueOf(rs.getBoolean("available")), rs.getString("notes")));
+                boolean available = rs.getBoolean("available");
+                String status = available ? "Свободно" : "В аренде";
+                result.add(new Equipment(
+                        rs.getInt("id"),
+                        rs.getString("model"),
+                        status,
+                        rs.getString("notes"),
+                        rs.getString("type")
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public List<Equipment> getByType(String type) {
+        List<Equipment> result = new ArrayList<>();
+        String sql = "SELECT id, model, available, notes, type FROM equipment WHERE type = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, type);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    boolean available = rs.getBoolean("available");
+                    String status = available ? "Свободно" : "В аренде";
+                    result.add(new Equipment(
+                            rs.getInt("id"),
+                            rs.getString("model"),
+                            status,
+                            rs.getString("notes"),
+                            rs.getString("type")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public void update(Equipment equipment) {
+        String sql = "UPDATE equipment SET model = ?, available = ?, notes = ?, type = ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            boolean isAvailable = "Свободно".equals(equipment.getStatus());
+            ps.setString(1, equipment.getModel());
+            ps.setBoolean(2, isAvailable);
+            ps.setString(3, equipment.getTerm());
+            ps.setString(4, equipment.getType());
+            ps.setInt(5, equipment.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(int id) {
+        String sql = "DELETE FROM equipment WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }

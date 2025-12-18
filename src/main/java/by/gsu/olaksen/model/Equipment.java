@@ -5,18 +5,21 @@ public class Equipment {
     private String model;
     private String status;
     private String term;
+    private String type;
 
-    public Equipment(String model, String status, String term) {
+    public Equipment(String model, String status, String term, String type) {
         this.model = model;
         this.status = status;
         this.term = term;
+        this.type = type;
     }
 
-        public Equipment(int id, String model, String status, String term) {
+        public Equipment(int id, String model, String status, String term, String type) {
         this.id = id;
         this.model = model;
         this.status = status;
         this.term = term;
+        this.type = type;
     }
 
     public String getModel() {
