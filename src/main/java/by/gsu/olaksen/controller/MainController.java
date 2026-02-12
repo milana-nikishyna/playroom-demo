@@ -1,5 +1,6 @@
 package by.gsu.olaksen.controller;
 
+import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.model.User;
 import by.gsu.olaksen.util.FXMLResourceLoader;
 import javafx.fxml.FXML;
@@ -26,6 +27,7 @@ public class MainController {
     @FXML
     private void onLogout() {
         try {
+            Session.getInstance().clear();
             var stage = (Stage) roleLabel.getScene().getWindow();
             var scene = FXMLResourceLoader.loadScene("login.fxml");
             stage.setScene(scene);

@@ -12,6 +12,10 @@ public enum Session {
         return currentUser;
     }
 
+    public void clear() {
+        currentUser = null;
+    }
+
     public static Session getInstance(){
         return INSTANCE;
     }
