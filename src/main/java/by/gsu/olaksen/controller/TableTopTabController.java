@@ -1,32 +1,30 @@
 package by.gsu.olaksen.controller;
 
-import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.db.TableTopRepository;
 import by.gsu.olaksen.model.Role;
+import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.model.TableTop;
 import by.gsu.olaksen.model.User;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TableTopTabController {
+    private static final Logger logger = LoggerFactory.getLogger(TableTopTabController.class);
 
-    @FXML
-    private TableView<TableTop> tabletops;
-    @FXML
-    private TableColumn<TableTop, Integer> tabletopInvNum;
-    @FXML
-    private TableColumn<TableTop, String> tabletopName;
-
-    @FXML
-    private TextField invNumField;
-    @FXML
-    private TextField nameField;
-    @FXML
-    private Button addButton;
-    @FXML
-    private Button deleteButton;
+    @FXML private TableView<TableTop> tabletops;
+    @FXML private TableColumn<TableTop, Integer> tabletopInvNum;
+    @FXML private TableColumn<TableTop, String> tabletopName;
+    @FXML private TextField invNumField;
+    @FXML private TextField nameField;
+    @FXML private Button addButton;
+    @FXML private Button deleteButton;
 
     private final TableTopRepository repository = new TableTopRepository();
 
@@ -115,7 +113,7 @@ public class TableTopTabController {
             nameField.clear();
             invNumField.clear();
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            logger.error("Invalid inventory number", e);
         }
     }
 

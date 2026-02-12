@@ -1,9 +1,9 @@
 package by.gsu.olaksen.controller;
 
-import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.db.EquipmentRepository;
 import by.gsu.olaksen.model.Equipment;
 import by.gsu.olaksen.model.Role;
+import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.model.User;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -15,28 +15,17 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 
 public class EquipmentTableController {
-    @FXML
-    private TableView<Equipment> equipmentTable;
-    @FXML
-    private TableColumn<Equipment, String> modelColumn;
-    @FXML
-    private TableColumn<Equipment, String> statusColumn;
-    @FXML
-    private TableColumn<Equipment, String> termColumn;
-    @FXML
-    private TableColumn<Equipment, String> priceColumn;
-    @FXML
-    private TextField addModelField;
-    @FXML
-    private Button addButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private ComboBox<Integer> rentHoursCombo;
-    @FXML
-    private Button rentButton;
-    @FXML
-    private Button cancelRentButton;
+    @FXML private TableView<Equipment> equipmentTable;
+    @FXML private TableColumn<Equipment, String> modelColumn;
+    @FXML private TableColumn<Equipment, String> statusColumn;
+    @FXML private TableColumn<Equipment, String> termColumn;
+    @FXML private TableColumn<Equipment, String> priceColumn;
+    @FXML private TextField addModelField;
+    @FXML private Button addButton;
+    @FXML private Button deleteButton;
+    @FXML private ComboBox<Integer> rentHoursCombo;
+    @FXML private Button rentButton;
+    @FXML private Button cancelRentButton;
 
     private final ObservableList<String> statuses = FXCollections.observableArrayList("Свободно", "В аренде");
     private final ObservableList<Equipment> items = FXCollections.observableArrayList();
@@ -112,7 +101,7 @@ public class EquipmentTableController {
 
         // заполнение списка часов аренды (1..12)
         if (rentHoursCombo != null) {
-            rentHoursCombo.getItems().setAll(1,2,3,4,5,6,7,8,9,10,11,12);
+            rentHoursCombo.getItems().setAll(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
             rentHoursCombo.setVisible(false); // скрываем по умолчанию
         }
         if (rentButton != null) {
@@ -122,11 +111,9 @@ public class EquipmentTableController {
             cancelRentButton.setDisable(true);
         }
 
-        equipmentTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            updateRentControlsState();
-        });
+        equipmentTable.getSelectionModel().selectedItemProperty().addListener((_, _, _) -> updateRentControlsState());
         if (rentHoursCombo != null) {
-            rentHoursCombo.valueProperty().addListener((obs, oldVal, newVal) -> updateRentControlsState());
+            rentHoursCombo.valueProperty().addListener((_, _, _) -> updateRentControlsState());
         }
 
     }

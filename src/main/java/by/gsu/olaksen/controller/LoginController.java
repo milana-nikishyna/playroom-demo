@@ -4,10 +4,16 @@ import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.service.UserService;
 import by.gsu.olaksen.util.FXMLResourceLoader;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LoginController {
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
@@ -30,7 +36,7 @@ public class LoginController {
                 stage.setTitle("Учёт");
                 stage.setScene(sceneWithController.scene());
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Failed to load main view", e);
             }
         } else {
             errorLabel.setText("Неверный логин или пароль");

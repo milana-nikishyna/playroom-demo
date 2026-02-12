@@ -1,6 +1,8 @@
 package by.gsu.olaksen.db;
 
 import by.gsu.olaksen.config.AppConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
  * @param <T> The entity type this repository manages
  */
 public abstract class BaseRepository<T> {
+    private static final Logger logger = LoggerFactory.getLogger(BaseRepository.class);
     protected static final String URL = AppConfig.getInstance().getDbProperty("url");
     protected static final String USER = AppConfig.getInstance().getDbProperty("user");
     protected static final String PASSWORD = AppConfig.getInstance().getDbProperty("password");
@@ -52,7 +55,7 @@ public abstract class BaseRepository<T> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("DB insert failed", e);
         }
         return 0;
     }
@@ -69,7 +72,7 @@ public abstract class BaseRepository<T> {
             setter.setValues(ps);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("DB update failed", e);
         }
     }
 
@@ -85,7 +88,7 @@ public abstract class BaseRepository<T> {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("DB delete failed", e);
         }
     }
 
@@ -101,7 +104,7 @@ public abstract class BaseRepository<T> {
             setter.setValues(ps);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("DB delete failed", e);
         }
     }
 
@@ -121,7 +124,7 @@ public abstract class BaseRepository<T> {
                 result.add(mapper.map(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("DB query failed", e);
         }
         return result;
     }
@@ -145,7 +148,7 @@ public abstract class BaseRepository<T> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("DB query failed", e);
         }
         return result;
     }
@@ -160,7 +163,7 @@ public abstract class BaseRepository<T> {
              var stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("DB statement failed", e);
         }
     }
 

@@ -3,6 +3,7 @@ package by.gsu.olaksen.util;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,13 +13,11 @@ import java.util.Objects;
  * Utility class for loading FXML resources with consistent error handling and path resolution.
  * Eliminates duplication and provides type-safe resource loading.
  */
+@UtilityClass
 public final class FXMLResourceLoader {
 
-    private FXMLResourceLoader() {
-    }
-
-    private static final String FXML_BASE_PATH = "/by/gsu/olaksen/";
-    private static final String STYLES_CSS = "styles.css";
+    private final String FXML_BASE_PATH = "/by/gsu/olaksen/";
+    private final String STYLES_CSS = "styles.css";
 
     /**
      * Load FXML file and return configured FXMLLoader.
@@ -27,7 +26,7 @@ public final class FXMLResourceLoader {
      * @return Configured FXMLLoader
      * @throws IllegalStateException if resource is not found
      */
-    public static FXMLLoader loadFXML(String fxmlFileName) {
+    public FXMLLoader loadFXML(String fxmlFileName) {
         var url = getResource(fxmlFileName);
         return new FXMLLoader(url);
     }
@@ -39,7 +38,7 @@ public final class FXMLResourceLoader {
      * @return Loaded Parent node
      * @throws RuntimeException if loading fails
      */
-    public static Parent loadView(String fxmlFileName) {
+    public Parent loadView(String fxmlFileName) {
         try {
             var loader = loadFXML(fxmlFileName);
             return loader.load();
@@ -56,7 +55,7 @@ public final class FXMLResourceLoader {
      * @return ViewWithController containing both Parent and Controller
      * @throws RuntimeException if loading fails
      */
-    public static <T> ViewWithController<T> loadViewWithController(String fxmlFileName) {
+    public <T> ViewWithController<T> loadViewWithController(String fxmlFileName) {
         try {
             var loader = loadFXML(fxmlFileName);
             Parent root = loader.load();
@@ -74,7 +73,7 @@ public final class FXMLResourceLoader {
      * @return Scene with loaded view and stylesheet
      * @throws RuntimeException if loading fails
      */
-    public static Scene loadScene(String fxmlFileName) {
+    public Scene loadScene(String fxmlFileName) {
         var root = loadView(fxmlFileName);
         var scene = new Scene(root);
         applyStylesheet(scene);
@@ -89,7 +88,7 @@ public final class FXMLResourceLoader {
      * @return SceneWithController containing Scene and Controller
      * @throws RuntimeException if loading fails
      */
-    public static <T> SceneWithController<T> loadSceneWithController(String fxmlFileName) {
+    public <T> SceneWithController<T> loadSceneWithController(String fxmlFileName) {
         var viewWithController = FXMLResourceLoader.<T>loadViewWithController(fxmlFileName);
         var scene = new Scene(viewWithController.view());
         applyStylesheet(scene);
@@ -101,7 +100,7 @@ public final class FXMLResourceLoader {
      *
      * @param scene The scene to style
      */
-    public static void applyStylesheet(Scene scene) {
+    public void applyStylesheet(Scene scene) {
         var cssUrl = getStylesheet();
         scene.getStylesheets().add(cssUrl.toExternalForm());
     }
@@ -113,7 +112,7 @@ public final class FXMLResourceLoader {
      * @return URL of the resource
      * @throws IllegalStateException if resource is not found
      */
-    public static URL getResource(String fileName) {
+    public URL getResource(String fileName) {
         var url = FXMLResourceLoader.class.getResource(FXML_BASE_PATH + fileName);
         return Objects.requireNonNull(url, "Missing resource: " + FXML_BASE_PATH + fileName);
     }
@@ -124,7 +123,7 @@ public final class FXMLResourceLoader {
      * @return URL of styles.css
      * @throws IllegalStateException if stylesheet is not found
      */
-    public static URL getStylesheet() {
+    public URL getStylesheet() {
         return getResource(STYLES_CSS);
     }
 

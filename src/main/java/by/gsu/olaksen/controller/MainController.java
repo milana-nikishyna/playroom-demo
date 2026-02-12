@@ -13,10 +13,8 @@ public class MainController {
 
     public static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
-    @FXML
-    private Label roleLabel;
-    @FXML
-    private MenuItem currentUserMenuItem;
+    @FXML private Label roleLabel;
+    @FXML private MenuItem currentUserMenuItem;
 
     public void setUser(User user) {
         roleLabel.setText("Ваша роль: " + user.role());

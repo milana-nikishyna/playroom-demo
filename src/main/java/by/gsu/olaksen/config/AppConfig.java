@@ -2,6 +2,7 @@ package by.gsu.olaksen.config;
 
 import by.gsu.olaksen.model.Role;
 import by.gsu.olaksen.model.User;
+import lombok.Getter;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.util.Map;
 public enum AppConfig {
     INSTANCE;
     private final Map<String, String> dbProperties;
-    private final List<User> users;
+    @Getter private final List<User> users;
 
     AppConfig() {
         try (var dbConfig = getClass().getClassLoader().getResourceAsStream("app.yml");
@@ -35,10 +36,6 @@ public enum AppConfig {
 
     public String getDbProperty(String key) {
         return dbProperties.get(key);
-    }
-
-    public List<User> getUsers() {
-        return users;
     }
 
     public static AppConfig getInstance() {
