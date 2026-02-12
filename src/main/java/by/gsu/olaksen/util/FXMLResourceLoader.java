@@ -12,7 +12,10 @@ import java.util.Objects;
  * Utility class for loading FXML resources with consistent error handling and path resolution.
  * Eliminates duplication and provides type-safe resource loading.
  */
-public class FXMLResourceLoader {
+public final class FXMLResourceLoader {
+
+    private FXMLResourceLoader() {
+    }
 
     private static final String FXML_BASE_PATH = "/by/gsu/olaksen/";
     private static final String STYLES_CSS = "styles.css";

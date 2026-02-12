@@ -11,6 +11,7 @@ public class TableTopRepository extends BaseRepository<TableTop> {
         var sql = """ 
                 CREATE TABLE IF NOT EXISTS tabletops (
                     id INTEGER PRIMARY KEY NOT NULL,
+                    inv_num INTEGER NOT NULL,
                     name VARCHAR(255) NOT NULL
                 )
                 """;
@@ -18,22 +19,26 @@ public class TableTopRepository extends BaseRepository<TableTop> {
     }
 
     public List<TableTop> getAllTableTops() {
-        var sql = "SELECT id, name FROM tabletops";
+        var sql = "SELECT id, inv_num, name FROM tabletops";
         return executeQuery(sql, rs ->
-                new TableTop(rs.getInt("id"), rs.getString("name"))
+                new TableTop(rs.getInt("id"), rs.getInt("inv_num"), rs.getString("name"))
         );
     }
 
     public int addTableTop(TableTop tabletop) {
-        var sql = "INSERT INTO tabletops (name) VALUES (?)";
-        return executeInsert(sql, ps -> ps.setString(1, tabletop.getTabletopName()));
+        var sql = "INSERT INTO tabletops (inv_num, name) VALUES (?, ?)";
+        return executeInsert(sql, ps -> {
+            ps.setInt(1, tabletop.getTabletopInvNum());
+            ps.setString(2, tabletop.getTabletopName());
+        });
     }
 
     public void updateTableTop(TableTop tabletop) {
-        var sql = "UPDATE tabletops SET name = ? WHERE id = ?";
+        var sql = "UPDATE tabletops SET inv_num = ?, name = ? WHERE id = ?";
         executeUpdate(sql, ps -> {
-            ps.setString(1, tabletop.getTabletopName());
-            ps.setInt(2, tabletop.getTabletopId());
+            ps.setInt(1, tabletop.getTabletopInvNum());
+            ps.setString(2, tabletop.getTabletopName());
+            ps.setInt(3, tabletop.getTabletopId());
         });
     }
 

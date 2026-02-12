@@ -15,10 +15,12 @@ public class TableTopTabController {
     @FXML
     private TableView<TableTop> tabletops;
     @FXML
-    private TableColumn<TableTop, Long> tabletopId;
+    private TableColumn<TableTop, Integer> tabletopInvNum;
     @FXML
     private TableColumn<TableTop, String> tabletopName;
 
+    @FXML
+    private TextField invNumField;
     @FXML
     private TextField nameField;
     @FXML
@@ -30,22 +32,45 @@ public class TableTopTabController {
 
     @FXML
     public void initialize() {
-        tabletopId.setCellValueFactory(new PropertyValueFactory<>("tabletopId"));
+        tabletopInvNum.setCellValueFactory(new PropertyValueFactory<>("tabletopInvNum"));
         tabletopName.setCellValueFactory(new PropertyValueFactory<>("tabletopName"));
+
+        tabletopInvNum.setCellFactory(TextFieldTableCell.forTableColumn(new javafx.util.converter.IntegerStringConverter()));
+        tabletopInvNum.setOnEditCommit(event -> {
+            var oldTableTop = event.getRowValue();
+            var newInvNum = event.getNewValue();
+            if (newInvNum == null) {
+                return;
+            }
+            var updated = new TableTop(oldTableTop.getTabletopId(), newInvNum, oldTableTop.getTabletopName());
+            repository.updateTableTop(updated);
+
+            var index = tabletops.getItems().indexOf(oldTableTop);
+            if (index >= 0) {
+                tabletops.getItems().set(index, updated);
+            }
+        });
 
         tabletopName.setCellFactory(TextFieldTableCell.forTableColumn());
         tabletopName.setOnEditCommit(event -> {
-            TableTop oldTableTop = event.getRowValue();
-            String newName = event.getNewValue();
-            TableTop newTableTop = new TableTop(oldTableTop.getTabletopId(), newName);
+            var oldTableTop = event.getRowValue();
+            var newName = event.getNewValue();
+            var updated = new TableTop(oldTableTop.getTabletopId(), oldTableTop.getTabletopInvNum(), newName);
 
-            repository.updateTableTop(newTableTop);
+            repository.updateTableTop(updated);
 
-            int index = tabletops.getItems().indexOf(oldTableTop);
+            var index = tabletops.getItems().indexOf(oldTableTop);
             if (index >= 0) {
-                tabletops.getItems().set(index, newTableTop);
+                tabletops.getItems().set(index, updated);
             }
         });
+
+        if (invNumField != null) {
+            invNumField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                var text = change.getControlNewText();
+                return text.matches("\\d*") ? change : null;
+            }));
+        }
 
         tabletops.getItems().setAll(repository.getAllTableTops());
         setUser(Session.getInstance().getUser());
@@ -66,19 +91,29 @@ public class TableTopTabController {
         if (nameField != null) {
             nameField.setVisible(isAdmin);
         }
+        if (invNumField != null) {
+            invNumField.setVisible(isAdmin);
+        }
         tabletops.setEditable(isAdmin);
         tabletopName.setEditable(isAdmin);
+        tabletopInvNum.setEditable(isAdmin);
     }
 
     @FXML
     private void onAdd() {
         try {
             var name = nameField.getText();
-            var tabletop = new TableTop(name);
+            var invNumText = invNumField.getText();
+            if (name == null || name.isBlank() || invNumText == null || invNumText.isBlank()) {
+                return;
+            }
+            var invNum = Integer.parseInt(invNumText);
+            var tabletop = new TableTop(invNum, name);
             var id = repository.addTableTop(tabletop);
             tabletop.setTabletopId(id);
             tabletops.getItems().add(tabletop);
             nameField.clear();
+            invNumField.clear();
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
