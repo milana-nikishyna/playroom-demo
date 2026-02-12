@@ -1,85 +1,44 @@
 package by.gsu.olaksen.db;
 
-import by.gsu.olaksen.config.AppConfig;
 import by.gsu.olaksen.model.TableTop;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
-public class TableTopRepository {
-    private static final String URL = AppConfig.getInstance().getDbProperty("url");
-    private static final String USER = AppConfig.getInstance().getDbProperty("user");
-    private static final String PASSWORD = AppConfig.getInstance().getDbProperty("password");
+public class TableTopRepository extends BaseRepository<TableTop> {
 
-    public TableTopRepository() {
-        initDb();
-    }
-
-    private void initDb() {
-        String sql = "CREATE TABLE IF NOT EXISTS tabletops (" +
-                "id INTEGER PRIMARY KEY NOT NULL, " +
-                "name VARCHAR(255) NOT NULL)";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    @Override
+    protected void initDb() {
+        var sql = """ 
+                CREATE TABLE IF NOT EXISTS tabletops (
+                    id INTEGER PRIMARY KEY NOT NULL,
+                    name VARCHAR(255) NOT NULL
+                )
+                """;
+        executeStatement(sql);
     }
 
     public List<TableTop> getAllTableTops() {
-        List<TableTop> result = new ArrayList<>();
-        String sql = "SELECT id, name FROM tabletops";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                result.add(new TableTop(rs.getInt("id"), rs.getString("name")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
+        var sql = "SELECT id, name FROM tabletops";
+        return executeQuery(sql, rs ->
+                new TableTop(rs.getInt("id"), rs.getString("name"))
+        );
     }
 
     public int addTableTop(TableTop tabletop) {
-        String sql = "INSERT INTO tabletops (name) VALUES (?)";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, tabletop.getTabletopName());
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        var sql = "INSERT INTO tabletops (name) VALUES (?)";
+        return executeInsert(sql, ps -> ps.setString(1, tabletop.getTabletopName()));
     }
 
     public void updateTableTop(TableTop tabletop) {
-        String sql = "UPDATE tabletops SET name = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        var sql = "UPDATE tabletops SET name = ? WHERE id = ?";
+        executeUpdate(sql, ps -> {
             ps.setString(1, tabletop.getTabletopName());
             ps.setInt(2, tabletop.getTabletopId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     public void deleteTableTop(int id) {
-        String sql = "DELETE FROM tabletops WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        var sql = "DELETE FROM tabletops WHERE id = ?";
+        executeDelete(sql, id);
     }
 }

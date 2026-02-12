@@ -1,10 +1,8 @@
 package by.gsu.olaksen.controller;
 
 import by.gsu.olaksen.model.User;
+import by.gsu.olaksen.util.FXMLResourceLoader;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
@@ -30,10 +28,8 @@ public class MainController {
     @FXML
     private void onLogout() {
         try {
-            Stage stage = (Stage) roleLabel.getScene().getWindow();
-            Parent root = FXMLLoader.load(getClass().getResource("../login.fxml"));
-            var scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
+            var stage = (Stage) roleLabel.getScene().getWindow();
+            var scene = FXMLResourceLoader.loadScene("login.fxml");
             stage.setScene(scene);
             stage.setTitle("Вход");
         } catch (Exception e) {

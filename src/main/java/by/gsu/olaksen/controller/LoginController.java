@@ -2,13 +2,10 @@ package by.gsu.olaksen.controller;
 
 import by.gsu.olaksen.model.Session;
 import by.gsu.olaksen.service.UserService;
-import by.gsu.olaksen.model.User;
+import by.gsu.olaksen.util.FXMLResourceLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 
 public class LoginController {
     @FXML private TextField usernameField;
@@ -19,26 +16,19 @@ public class LoginController {
 
     @FXML
     private void onLogin() {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-        User user = userService.authenticate(username, password);
+        var username = usernameField.getText();
+        var password = passwordField.getText();
+        var user = userService.authenticate(username, password);
 
         if (user != null) {
             Session.getInstance().setUser(user);
             try {
+                var sceneWithController = FXMLResourceLoader.<MainController>loadSceneWithController("main.fxml");
+                sceneWithController.controller().setUser(user);
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("../main.fxml"));
-                Parent root = loader.load();
-
-                MainController mainController = loader.getController();
-
-                mainController.setUser(user);
-
-                Stage stage = (Stage) usernameField.getScene().getWindow();
-                var scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
+                var stage = (Stage) usernameField.getScene().getWindow();
                 stage.setTitle("Учёт");
-                stage.setScene(scene);
+                stage.setScene(sceneWithController.scene());
             } catch (Exception e) {
                 e.printStackTrace();
             }

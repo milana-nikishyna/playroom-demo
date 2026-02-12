@@ -1,8 +1,7 @@
 package by.gsu.olaksen.controller;
 
+import by.gsu.olaksen.util.FXMLResourceLoader;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 
 public class RentTabController {
@@ -19,28 +18,17 @@ public class RentTabController {
     @FXML
     public void initialize() {
         try {
-            // consoles tab
-            FXMLLoader loader1 = new FXMLLoader(getClass().getResource("../equipment_table.fxml"));
-            Parent consoleContent = loader1.load();
-            EquipmentTableController consoleTableController = loader1.getController();
-            consoleTableController.loadEquipmentByType(TYPE_CONSOLE);
-            consoleTab.setContent(consoleContent);
-
-            // games tab
-            FXMLLoader loader2 = new FXMLLoader(getClass().getResource("../equipment_table.fxml"));
-            Parent gameContent = loader2.load();
-            EquipmentTableController gameTableController = loader2.getController();
-            gameTableController.loadEquipmentByType(TYPE_GAME);
-            gameTab.setContent(gameContent);
-
-            // gamepads tab
-            FXMLLoader loader3 = new FXMLLoader(getClass().getResource("../equipment_table.fxml"));
-            Parent gamepadContent = loader3.load();
-            EquipmentTableController gamepadTableController = loader3.getController();
-            gamepadTableController.loadEquipmentByType(TYPE_GAMEPAD);
-            gamepadTab.setContent(gamepadContent);
+            loadEquipmentTab(consoleTab, TYPE_CONSOLE);
+            loadEquipmentTab(gameTab, TYPE_GAME);
+            loadEquipmentTab(gamepadTab, TYPE_GAMEPAD);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load equipment tables", e);
         }
+    }
+
+    private void loadEquipmentTab(Tab tab, String equipmentType) {
+        var viewWithController = FXMLResourceLoader.<EquipmentTableController>loadViewWithController("equipment_table.fxml");
+        viewWithController.controller().loadEquipmentByType(equipmentType);
+        tab.setContent(viewWithController.view());
     }
 }
