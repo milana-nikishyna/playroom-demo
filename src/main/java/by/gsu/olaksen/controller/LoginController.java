@@ -34,7 +34,20 @@ public class LoginController {
 
                 var stage = (Stage) usernameField.getScene().getWindow();
                 stage.setTitle("Учёт");
+
+                // Разрешаем изменение размера окна для главного экрана
+                stage.setResizable(true);
+
+                // Устанавливаем размеры окна при переходе к главному экрану
+                stage.setWidth(1200);
+                stage.setHeight(800);
+                stage.setMinWidth(1000);
+                stage.setMinHeight(700);
+
                 stage.setScene(sceneWithController.scene());
+
+                // Центрируем окно на экране после изменения размеров
+                stage.centerOnScreen();
             } catch (Exception e) {
                 logger.error("Не удалось загрузить главное окно", e);
             }

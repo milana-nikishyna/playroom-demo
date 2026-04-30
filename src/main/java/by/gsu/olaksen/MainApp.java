@@ -11,7 +11,14 @@ public class MainApp extends Application {
         var scene = FXMLResourceLoader.loadScene("login.fxml");
 
         primaryStage.setTitle("Вход");
+
+        // Устанавливаем Scene ДО установки размеров
         primaryStage.setScene(scene);
+
+        // Для окна логина устанавливаем компактные размеры
+        primaryStage.setResizable(false); // Запрещаем изменять размер окна логина
+        primaryStage.sizeToScene(); // Автоматически подбираем размер окна под Scene
+    
         primaryStage.show();
     }
 }

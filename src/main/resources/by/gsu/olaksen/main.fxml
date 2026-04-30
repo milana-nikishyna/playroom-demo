@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<VBox prefHeight="400.0" prefWidth="640.0" spacing="5" xmlns="http://javafx.com/javafx/25.0.1"
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefHeight="800.0" prefWidth="1200.0" spacing="5" xmlns="http://javafx.com/javafx/25.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="by.gsu.olaksen.controller.MainController">
 
     <MenuBar VBox.vgrow="NEVER">
@@ -18,6 +18,11 @@
             <MenuItem mnemonicParsing="false" text="About MyHelloApp"/>
         </Menu>
     </MenuBar>
+
+    <!-- Живые часы с датой -->
+    <HBox alignment="CENTER" styleClass="date-time-container">
+        <Label fx:id="dateTimeLabel" styleClass="date-time-label" text="Загрузка..."/>
+    </HBox>
 
     <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <Tab text="Зал">
