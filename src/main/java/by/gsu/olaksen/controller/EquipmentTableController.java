@@ -14,6 +14,8 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 
+import java.math.BigDecimal;
+
 public class EquipmentTableController {
     @FXML private TableView<Equipment> equipmentTable;
     @FXML private TableColumn<Equipment, String> modelColumn;
@@ -50,7 +52,7 @@ public class EquipmentTableController {
 
         statusColumn.setCellFactory(ComboBoxTableCell.forTableColumn(statuses));
         statusColumn.setOnEditCommit(event -> {
-            Equipment equipment = event.getRowValue();
+            var equipment = event.getRowValue();
             equipment.setStatus(event.getNewValue());
             // сохраняем изменение
             repository.update(equipment);
@@ -73,14 +75,14 @@ public class EquipmentTableController {
 
         modelColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         modelColumn.setOnEditCommit(event -> {
-            Equipment equipment = event.getRowValue();
+            var equipment = event.getRowValue();
             equipment.setModel(event.getNewValue());
             repository.update(equipment);
         });
 
         termColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         termColumn.setOnEditCommit(event -> {
-            Equipment equipment = event.getRowValue();
+            var equipment = event.getRowValue();
             equipment.setTerm(event.getNewValue());
             repository.update(equipment);
         });
@@ -88,9 +90,9 @@ public class EquipmentTableController {
         // цена/час редактируется только админом; простое текстовое представление числа
         priceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         priceColumn.setOnEditCommit(event -> {
-            Equipment equipment = event.getRowValue();
+            var equipment = event.getRowValue();
             try {
-                double newPrice = Double.parseDouble(event.getNewValue());
+                var newPrice = new BigDecimal(event.getNewValue());
                 equipment.setPricePerHour(newPrice);
                 repository.update(equipment);
             } catch (NumberFormatException e) {
@@ -160,7 +162,7 @@ public class EquipmentTableController {
     private void onAdd() {
         if (isAdmin && addModelField.getText() != null && !addModelField.getText().isBlank()) {
             String type = equipmentType != null ? equipmentType : "Оборудование";
-            Equipment equipment = new Equipment(addModelField.getText(), "Свободно", "", type);
+            var equipment = new Equipment(addModelField.getText(), "Свободно", "", type);
             int id = repository.add(equipment);
             // сохраняем сгенерированный БД id в объекте для будущих обновлений/удалений
             equipment.setId(id);
@@ -172,7 +174,7 @@ public class EquipmentTableController {
     private void addNewItem() {
         if (isAdmin) {
             String type = equipmentType != null ? equipmentType : "Оборудование";
-            Equipment newItem = new Equipment("Новая модель", "Свободно", "", type);
+            var newItem = new Equipment("Новая модель", "Свободно", "", type);
             int id = repository.add(newItem);
             newItem.setId(id);
             items.add(newItem);
@@ -186,7 +188,7 @@ public class EquipmentTableController {
         if (!isAdmin) {
             return;
         }
-        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
+        var selected = equipmentTable.getSelectionModel().getSelectedItem();
         if (selected != null) {
             repository.delete(selected.getId());
             items.remove(selected);
@@ -195,8 +197,8 @@ public class EquipmentTableController {
 
     @FXML
     private void onRent() {
-        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
-        Integer hours = rentHoursCombo != null ? rentHoursCombo.getValue() : null;
+        var selected = equipmentTable.getSelectionModel().getSelectedItem();
+        var hours = rentHoursCombo != null ? rentHoursCombo.getValue() : null;
         if (selected == null || hours == null) {
             return;
         }
@@ -204,8 +206,8 @@ public class EquipmentTableController {
             return;
         }
 
-        double pricePerHour = selected.getPricePerHour();
-        double total = pricePerHour * hours;
+        var pricePerHour = selected.getPricePerHour();
+        var total = pricePerHour.multiply(BigDecimal.valueOf(hours));
 
         selected.setStatus("В аренде");
         var endTime = java.time.LocalDateTime.now().plusHours(hours);
@@ -227,7 +229,7 @@ public class EquipmentTableController {
 
     @FXML
     private void onCancelRent() {
-        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
+        var selected = equipmentTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
             return;
         }
@@ -243,7 +245,7 @@ public class EquipmentTableController {
     }
 
     private void updateRentControlsState() {
-        Equipment selected = equipmentTable.getSelectionModel().getSelectedItem();
+        var selected = equipmentTable.getSelectionModel().getSelectedItem();
         boolean isFree = selected != null && "Свободно".equals(selected.getStatus());
         boolean isRented = selected != null && "В аренде".equals(selected.getStatus());
 

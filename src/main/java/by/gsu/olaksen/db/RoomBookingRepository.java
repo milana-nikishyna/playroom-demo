@@ -9,7 +9,7 @@ public class RoomBookingRepository extends BaseRepository<String> {
     protected void initDb() {
         var sql = """
                 CREATE TABLE IF NOT EXISTS room_booking (
-                    id INTEGER PRIMARY KEY NOT NULL,
+                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
                     room_number INTEGER NOT NULL,
                     booking_date TEXT NOT NULL,
                     hour VARCHAR(10) NOT NULL,

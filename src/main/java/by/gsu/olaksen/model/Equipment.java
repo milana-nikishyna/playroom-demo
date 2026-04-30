@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,7 +15,7 @@ public class Equipment {
     private String status;
     private String term;
     private String type;
-    private double pricePerHour;
+    private BigDecimal pricePerHour;
 
     /**
      * Конструктор без id (используется до сохранения сущности в БД).
@@ -24,6 +26,7 @@ public class Equipment {
         this.status = status;
         this.term = term;
         this.type = type;
+        this.pricePerHour = new BigDecimal(0);
     }
 
 }

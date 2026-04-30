@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         var scene = FXMLResourceLoader.loadScene("login.fxml");
 
         primaryStage.setTitle("Вход");

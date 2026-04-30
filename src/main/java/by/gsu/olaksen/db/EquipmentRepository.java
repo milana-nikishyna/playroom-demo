@@ -2,6 +2,7 @@ package by.gsu.olaksen.db;
 
 import by.gsu.olaksen.model.Equipment;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class EquipmentRepository extends BaseRepository<Equipment> {
@@ -10,12 +11,12 @@ public class EquipmentRepository extends BaseRepository<Equipment> {
     protected void initDb() {
         var sql = """
                 CREATE TABLE IF NOT EXISTS equipment (
-                    id INTEGER PRIMARY KEY NOT NULL,
+                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
                     model VARCHAR(255) NOT NULL,
                     available BOOL NOT NULL,
                     notes VARCHAR(255),
                     type VARCHAR(50) NOT NULL,
-                    price_per_hour REAL DEFAULT 0
+                    price_per_hour VARCHAR(50) DEFAULT 0
                 )
                 """;
         executeStatement(sql);
@@ -29,7 +30,7 @@ public class EquipmentRepository extends BaseRepository<Equipment> {
             ps.setBoolean(2, isAvailable);
             ps.setString(3, equipment.getTerm());
             ps.setString(4, equipment.getType());
-            ps.setDouble(5, equipment.getPricePerHour());
+            ps.setString(5, equipment.getPricePerHour().toString());
         });
     }
 
@@ -44,7 +45,7 @@ public class EquipmentRepository extends BaseRepository<Equipment> {
                     status,
                     rs.getString("notes"),
                     rs.getString("type"),
-                    rs.getDouble("price_per_hour")
+                    new BigDecimal(rs.getString("price_per_hour"))
             );
         });
     }
@@ -62,7 +63,7 @@ public class EquipmentRepository extends BaseRepository<Equipment> {
                             status,
                             rs.getString("notes"),
                             rs.getString("type"),
-                            rs.getDouble("price_per_hour")
+                            new BigDecimal(rs.getString("price_per_hour"))
                     );
                 });
     }
@@ -75,7 +76,7 @@ public class EquipmentRepository extends BaseRepository<Equipment> {
             ps.setBoolean(2, isAvailable);
             ps.setString(3, equipment.getTerm());
             ps.setString(4, equipment.getType());
-            ps.setDouble(5, equipment.getPricePerHour());
+            ps.setString(5, equipment.getPricePerHour().toString());
             ps.setInt(6, equipment.getId());
         });
     }
