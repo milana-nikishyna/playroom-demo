@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Abstract base repository providing common database operations.
- * Reduces code duplication across repository classes.
+ * Абстрактный базовый репозиторий, предоставляющий общие операции с базой данных.
+ * Уменьшает дублирование кода в классах репозиториев.
  *
- * @param <T> The entity type this repository manages
+ * @param <T> Тип сущности, которой управляет данный репозиторий
  */
 public abstract class BaseRepository<T> {
     private static final Logger logger = LoggerFactory.getLogger(BaseRepository.class);
@@ -25,24 +25,24 @@ public abstract class BaseRepository<T> {
     }
 
     /**
-     * Initialize database schema for this repository.
-     * Each repository must implement its own table creation logic.
+     * Инициализация схемы базы данных для данного репозитория.
+     * Каждый репозиторий должен реализовать свою логику создания таблиц.
      */
     protected abstract void initDb();
 
     /**
-     * Get a database connection.
+     * Получает подключение к базе данных.
      */
     protected Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     /**
-     * Execute an INSERT statement and return the generated key.
+     * Выполняет операцию INSERT и возвращает сгенерированный ключ.
      *
-     * @param sql    The SQL INSERT statement
-     * @param setter Functional interface to set PreparedStatement parameters
-     * @return The generated key (ID), or 0 if failed
+     * @param sql    SQL запрос INSERT
+     * @param setter Функциональный интерфейс для установки параметров PreparedStatement
+     * @return Сгенерированный ключ (ID), или 0 в случае ошибки
      */
     protected int executeInsert(String sql, PreparedStatementSetter setter) {
         try (var conn = getConnection();
@@ -55,16 +55,16 @@ public abstract class BaseRepository<T> {
                 }
             }
         } catch (SQLException e) {
-            logger.error("DB insert failed", e);
+            logger.error("Ошибка при выполнении INSERT в БД", e);
         }
         return 0;
     }
 
     /**
-     * Execute an UPDATE statement.
+     * Выполняет операцию UPDATE.
      *
-     * @param sql    The SQL UPDATE statement
-     * @param setter Functional interface to set PreparedStatement parameters
+     * @param sql    SQL запрос UPDATE
+     * @param setter Функциональный интерфейс для установки параметров PreparedStatement
      */
     protected void executeUpdate(String sql, PreparedStatementSetter setter) {
         try (var conn = getConnection();
@@ -72,15 +72,15 @@ public abstract class BaseRepository<T> {
             setter.setValues(ps);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("DB update failed", e);
+            logger.error("Ошибка при выполнении UPDATE в БД", e);
         }
     }
 
     /**
-     * Execute a DELETE statement with a single ID parameter.
+     * Выполняет операцию DELETE с одним параметром ID.
      *
-     * @param sql The SQL DELETE statement
-     * @param id  The ID to delete
+     * @param sql SQL запрос DELETE
+     * @param id  ID для удаления
      */
     protected void executeDelete(String sql, int id) {
         try (var conn = getConnection();
@@ -88,15 +88,15 @@ public abstract class BaseRepository<T> {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.error("DB delete failed", e);
+            logger.error("Ошибка при выполнении DELETE в БД", e);
         }
     }
 
     /**
-     * Execute a DELETE statement with custom parameters.
+     * Выполняет операцию DELETE с пользовательскими параметрами.
      *
-     * @param sql    The SQL DELETE statement
-     * @param setter Functional interface to set PreparedStatement parameters
+     * @param sql    SQL запрос DELETE
+     * @param setter Функциональный интерфейс для установки параметров PreparedStatement
      */
     protected void executeDelete(String sql, PreparedStatementSetter setter) {
         try (var conn = getConnection();
@@ -109,11 +109,11 @@ public abstract class BaseRepository<T> {
     }
 
     /**
-     * Execute a SELECT query without parameters.
+     * Выполняет SELECT запрос без параметров.
      *
-     * @param sql    The SQL SELECT statement
-     * @param mapper Functional interface to map ResultSet to entity
-     * @return List of entities
+     * @param sql    SQL запрос SELECT
+     * @param mapper Функциональный интерфейс для преобразования ResultSet в сущность
+     * @return Список сущностей
      */
     protected List<T> executeQuery(String sql, ResultSetMapper<T> mapper) {
         var result = new ArrayList<T>();
@@ -124,18 +124,18 @@ public abstract class BaseRepository<T> {
                 result.add(mapper.map(rs));
             }
         } catch (SQLException e) {
-            logger.error("DB query failed", e);
+            logger.error("Ошибка при выполнении SELECT запроса в БД", e);
         }
         return result;
     }
 
     /**
-     * Execute a SELECT query with parameters.
+     * Выполняет SELECT запрос с параметрами.
      *
-     * @param sql    The SQL SELECT statement
-     * @param setter Functional interface to set PreparedStatement parameters
-     * @param mapper Functional interface to map ResultSet to entity
-     * @return List of entities
+     * @param sql    SQL запрос SELECT
+     * @param setter Функциональный интерфейс для установки параметров PreparedStatement
+     * @param mapper Функциональный интерфейс для преобразования ResultSet в сущность
+     * @return Список сущностей
      */
     protected List<T> executeQuery(String sql, PreparedStatementSetter setter, ResultSetMapper<T> mapper) {
         var result = new ArrayList<T>();
@@ -154,21 +154,21 @@ public abstract class BaseRepository<T> {
     }
 
     /**
-     * Execute a custom SQL statement (for schema alterations, etc.).
+     * Выполняет произвольную SQL-команду (для изменения схемы и т.д.).
      *
-     * @param sql The SQL statement to execute
+     * @param sql SQL-команда для выполнения
      */
     protected void executeStatement(String sql) {
         try (var conn = getConnection();
              var stmt = conn.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
-            logger.error("DB statement failed", e);
+            logger.error("Ошибка при выполнении SQL-команды в БД", e);
         }
     }
 
     /**
-     * Functional interface for setting PreparedStatement parameters.
+     * Функциональный интерфейс для установки параметров PreparedStatement.
      */
     @FunctionalInterface
     protected interface PreparedStatementSetter {
@@ -176,7 +176,7 @@ public abstract class BaseRepository<T> {
     }
 
     /**
-     * Functional interface for mapping ResultSet to entity.
+     * Функциональный интерфейс для преобразования ResultSet в сущность.
      */
     @FunctionalInterface
     protected interface ResultSetMapper<T> {

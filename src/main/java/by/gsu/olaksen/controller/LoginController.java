@@ -36,7 +36,7 @@ public class LoginController {
                 stage.setTitle("Учёт");
                 stage.setScene(sceneWithController.scene());
             } catch (Exception e) {
-                logger.error("Failed to load main view", e);
+                logger.error("Не удалось загрузить главное окно", e);
             }
         } else {
             errorLabel.setText("Неверный логин или пароль");

@@ -30,7 +30,7 @@ public enum AppConfig {
 
             this.dbProperties = dbYaml.load(dbConfig);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load config files", e);
+            throw new RuntimeException("Не удалось загрузить конфигурационные файлы", e);
         }
     }
 

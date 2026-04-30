@@ -113,7 +113,7 @@ public class TableTopTabController {
             nameField.clear();
             invNumField.clear();
         } catch (NumberFormatException e) {
-            logger.error("Invalid inventory number", e);
+            logger.error("Неверный инвентарный номер", e);
         }
     }
 

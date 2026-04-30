@@ -32,9 +32,9 @@ public class EquipmentTableController {
     private boolean isAdmin = false;
     private final EquipmentRepository repository = new EquipmentRepository();
     /**
-     * Logical type of equipment for this table instance
-     * (e.g. "console", "game", "gamepad").
-     * If null, table shows all equipment.
+     * Логический тип оборудования для данного экземпляра таблицы
+     * (например, "console", "game", "gamepad").
+     * Если null, таблица показывает всё оборудование.
      */
     private String equipmentType;
 
@@ -52,12 +52,12 @@ public class EquipmentTableController {
         statusColumn.setOnEditCommit(event -> {
             Equipment equipment = event.getRowValue();
             equipment.setStatus(event.getNewValue());
-            // persist change
+            // сохраняем изменение
             repository.update(equipment);
             equipmentTable.refresh();
         });
 
-        // default: load all equipment from DB into observable list
+        // по умолчанию: загружаем всё оборудование из БД в observable список
         items.setAll(repository.getAll());
         equipmentTable.setItems(items);
 
@@ -148,8 +148,8 @@ public class EquipmentTableController {
     }
 
     /**
-     * Configure this table to show only a specific equipment type.
-     * Used by tabs like consoles/games/gamepads.
+     * Настраивает таблицу для отображения только определенного типа оборудования.
+     * Используется вкладками, такими как консоли/игры/геймпады.
      */
     public void loadEquipmentByType(String type) {
         this.equipmentType = type;
@@ -162,7 +162,7 @@ public class EquipmentTableController {
             String type = equipmentType != null ? equipmentType : "Оборудование";
             Equipment equipment = new Equipment(addModelField.getText(), "Свободно", "", type);
             int id = repository.add(equipment);
-            // store DB-generated id in object for future updates/deletes
+            // сохраняем сгенерированный БД id в объекте для будущих обновлений/удалений
             equipment.setId(id);
             items.add(equipment);
             addModelField.clear();

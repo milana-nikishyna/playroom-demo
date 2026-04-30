@@ -10,8 +10,8 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * Utility class for loading FXML resources with consistent error handling and path resolution.
- * Eliminates duplication and provides type-safe resource loading.
+ * Утилитный класс для загрузки FXML-ресурсов с единообразной обработкой ошибок и разрешением путей.
+ * Устраняет дублирование и обеспечивает типобезопасную загрузку ресурсов.
  */
 @UtilityClass
 public final class FXMLResourceLoader {
@@ -20,11 +20,11 @@ public final class FXMLResourceLoader {
     private final String STYLES_CSS = "styles.css";
 
     /**
-     * Load FXML file and return configured FXMLLoader.
+     * Загружает FXML-файл и возвращает настроенный FXMLLoader.
      *
-     * @param fxmlFileName The FXML file name (e.g., "login.fxml")
-     * @return Configured FXMLLoader
-     * @throws IllegalStateException if resource is not found
+     * @param fxmlFileName Имя FXML-файла (например, "login.fxml")
+     * @return Настроенный FXMLLoader
+     * @throws IllegalStateException если ресурс не найден
      */
     public FXMLLoader loadFXML(String fxmlFileName) {
         var url = getResource(fxmlFileName);
@@ -32,28 +32,28 @@ public final class FXMLResourceLoader {
     }
 
     /**
-     * Load FXML file and return the root Parent node.
+     * Загружает FXML-файл и возвращает корневой узел Parent.
      *
-     * @param fxmlFileName The FXML file name
-     * @return Loaded Parent node
-     * @throws RuntimeException if loading fails
+     * @param fxmlFileName Имя FXML-файла
+     * @return Загруженный узел Parent
+     * @throws RuntimeException если загрузка не удалась
      */
     public Parent loadView(String fxmlFileName) {
         try {
             var loader = loadFXML(fxmlFileName);
             return loader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load FXML view: " + fxmlFileName, e);
+            throw new RuntimeException("Не удалось загрузить FXML-представление: " + fxmlFileName, e);
         }
     }
 
     /**
-     * Load FXML file and return both Parent and Controller.
+     * Загружает FXML-файл и возвращает как Parent, так и Controller.
      *
-     * @param fxmlFileName The FXML file name
-     * @param <T>          Controller type
-     * @return ViewWithController containing both Parent and Controller
-     * @throws RuntimeException if loading fails
+     * @param fxmlFileName Имя FXML-файла
+     * @param <T>          Тип контроллера
+     * @return ViewWithController, содержащий Parent и Controller
+     * @throws RuntimeException если загрузка не удалась
      */
     public <T> ViewWithController<T> loadViewWithController(String fxmlFileName) {
         try {
@@ -62,16 +62,16 @@ public final class FXMLResourceLoader {
             T controller = loader.getController();
             return new ViewWithController<>(root, controller);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load FXML view with controller: " + fxmlFileName, e);
+            throw new RuntimeException("Не удалось загрузить FXML-представление с контроллером: " + fxmlFileName, e);
         }
     }
 
     /**
-     * Load FXML and create a Scene with default stylesheet applied.
+     * Загружает FXML и создает Scene с примененной таблицей стилей по умолчанию.
      *
-     * @param fxmlFileName The FXML file name
-     * @return Scene with loaded view and stylesheet
-     * @throws RuntimeException if loading fails
+     * @param fxmlFileName Имя FXML-файла
+     * @return Scene с загруженным представлением и таблицей стилей
+     * @throws RuntimeException если загрузка не удалась
      */
     public Scene loadScene(String fxmlFileName) {
         var root = loadView(fxmlFileName);
@@ -81,12 +81,12 @@ public final class FXMLResourceLoader {
     }
 
     /**
-     * Load FXML, create Scene, and return with controller.
+     * Загружает FXML, создает Scene и возвращает вместе с контроллером.
      *
-     * @param fxmlFileName The FXML file name
-     * @param <T>          Controller type
-     * @return SceneWithController containing Scene and Controller
-     * @throws RuntimeException if loading fails
+     * @param fxmlFileName Имя FXML-файла
+     * @param <T>          Тип контроллера
+     * @return SceneWithController, содержащий Scene и Controller
+     * @throws RuntimeException если загрузка не удалась
      */
     public <T> SceneWithController<T> loadSceneWithController(String fxmlFileName) {
         var viewWithController = FXMLResourceLoader.<T>loadViewWithController(fxmlFileName);
@@ -96,9 +96,9 @@ public final class FXMLResourceLoader {
     }
 
     /**
-     * Apply default stylesheet to a scene.
+     * Применяет таблицу стилей по умолчанию к сцене.
      *
-     * @param scene The scene to style
+     * @param scene Сцена для стилизации
      */
     public void applyStylesheet(Scene scene) {
         var cssUrl = getStylesheet();
@@ -106,39 +106,39 @@ public final class FXMLResourceLoader {
     }
 
     /**
-     * Get URL for a resource file.
+     * Получает URL для файла ресурса.
      *
-     * @param fileName The resource file name
-     * @return URL of the resource
-     * @throws IllegalStateException if resource is not found
+     * @param fileName Имя файла ресурса
+     * @return URL ресурса
+     * @throws IllegalStateException если ресурс не найден
      */
     public URL getResource(String fileName) {
         var url = FXMLResourceLoader.class.getResource(FXML_BASE_PATH + fileName);
-        return Objects.requireNonNull(url, "Missing resource: " + FXML_BASE_PATH + fileName);
+        return Objects.requireNonNull(url, "Отсутствует ресурс: " + FXML_BASE_PATH + fileName);
     }
 
     /**
-     * Get URL for the default stylesheet.
+     * Получает URL для таблицы стилей по умолчанию.
      *
-     * @return URL of styles.css
-     * @throws IllegalStateException if stylesheet is not found
+     * @return URL файла styles.css
+     * @throws IllegalStateException если таблица стилей не найдена
      */
     public URL getStylesheet() {
         return getResource(STYLES_CSS);
     }
 
     /**
-     * Container for Parent view and its Controller.
+     * Контейнер для представления Parent и его контроллера.
      *
-     * @param <T> Controller type
+     * @param <T> Тип контроллера
      */
     public record ViewWithController<T>(Parent view, T controller) {
     }
 
     /**
-     * Container for Scene and its Controller.
+     * Контейнер для Scene и его контроллера.
      *
-     * @param <T> Controller type
+     * @param <T> Тип контроллера
      */
     public record SceneWithController<T>(Scene scene, T controller) {
     }

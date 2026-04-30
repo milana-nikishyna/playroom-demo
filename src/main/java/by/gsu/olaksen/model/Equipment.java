@@ -16,8 +16,8 @@ public class Equipment {
     private double pricePerHour;
 
     /**
-     * Constructor without id (used before entity is stored in DB).
-     * Type must always be specified explicitly by the caller (e.g. tab).
+     * Конструктор без id (используется до сохранения сущности в БД).
+     * Тип должен всегда указываться явно вызывающим кодом (например, вкладкой).
      */
     public Equipment(String model, String status, String term, String type) {
         this.model = model;

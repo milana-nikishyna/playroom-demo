@@ -10,7 +10,7 @@ public class RentTabController {
     @FXML private Tab gameTab;
     @FXML private Tab gamepadTab;
 
-    // type values used in DB (you can change these to match your schema)
+    // значения типов, используемые в БД
     private static final String TYPE_CONSOLE = "console";
     private static final String TYPE_GAME = "game";
     private static final String TYPE_GAMEPAD = "gamepad";
@@ -22,7 +22,7 @@ public class RentTabController {
             loadEquipmentTab(gameTab, TYPE_GAME);
             loadEquipmentTab(gamepadTab, TYPE_GAMEPAD);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load equipment tables", e);
+            throw new RuntimeException("Не удалось загрузить таблицы оборудования", e);
         }
     }
 
