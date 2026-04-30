@@ -9,16 +9,7 @@ public class EquipmentRepository extends BaseRepository<Equipment> {
 
     @Override
     protected void initDb() {
-        var sql = """
-                CREATE TABLE IF NOT EXISTS equipment (
-                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-                    model VARCHAR(255) NOT NULL,
-                    available BOOL NOT NULL,
-                    notes VARCHAR(255),
-                    type VARCHAR(50) NOT NULL,
-                    price_per_hour VARCHAR(50) DEFAULT 0
-                )
-                """;
+        var sql = SQL_DIALECT.createEquipmentTable();
         executeStatement(sql);
     }
 

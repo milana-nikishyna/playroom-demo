@@ -19,6 +19,7 @@ public abstract class BaseRepository<T> {
     protected static final String URL = AppConfig.getInstance().getDbProperty("url");
     protected static final String USER = AppConfig.getInstance().getDbProperty("user");
     protected static final String PASSWORD = AppConfig.getInstance().getDbProperty("password");
+    protected static final SqlDialect SQL_DIALECT = SqlDialect.forUrl(URL);
 
     public BaseRepository() {
         initDb();

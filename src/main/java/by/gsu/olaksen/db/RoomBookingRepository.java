@@ -7,15 +7,7 @@ public class RoomBookingRepository extends BaseRepository<String> {
 
     @Override
     protected void initDb() {
-        var sql = """
-                CREATE TABLE IF NOT EXISTS room_booking (
-                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-                    room_number INTEGER NOT NULL,
-                    booking_date TEXT NOT NULL,
-                    hour VARCHAR(10) NOT NULL,
-                    status VARCHAR(20) NOT NULL
-                )
-                """;
+        var sql = SQL_DIALECT.createRoomBookingTable();
         executeStatement(sql);
     }
 
@@ -37,7 +29,7 @@ public class RoomBookingRepository extends BaseRepository<String> {
      */
     public void bookSlot(int roomNumber, LocalDate date, String hour) {
         var sql = "INSERT INTO room_booking (room_number, booking_date, hour, status) VALUES (?, ?, ?, ?)";
-        executeUpdate(sql, ps -> {
+        executeInsert(sql, ps -> {
             ps.setInt(1, roomNumber);
             ps.setString(2, date.toString());
             ps.setString(3, hour);

@@ -8,13 +8,7 @@ public class TableTopRepository extends BaseRepository<TableTop> {
 
     @Override
     protected void initDb() {
-        var sql = """ 
-                CREATE TABLE IF NOT EXISTS tabletops (
-                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-                    inv_num INTEGER NOT NULL,
-                    name VARCHAR(255) NOT NULL
-                )
-                """;
+        var sql = SQL_DIALECT.createTableTopsTable();
         executeStatement(sql);
     }
 
