@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/25.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="by.gsu.olaksen.controller.EquipmentTableController">
+    <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+        <TableView fx:id="equipmentTable" editable="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="modelColumn" text="Модель/Название" prefWidth="200.0"/>
+                <TableColumn fx:id="statusColumn" text="Статус" prefWidth="90.0"/>
+                <TableColumn fx:id="termColumn" text="Срок аренды" prefWidth="150.0"/>
+                <TableColumn fx:id="priceColumn" text="Цена/час" prefWidth="90.0"/>
+            </columns>
+        </TableView>
+        <HBox spacing="10">
+            <TextField fx:id="addModelField" promptText="Модель/Название"/>
+            <Button fx:id="addButton" text="Добавить" onAction="#onAdd"/>
+            <Button fx:id="deleteButton" text="Удалить" onAction="#onDelete"/>
+            <ComboBox fx:id="rentHoursCombo" promptText="Часы аренды" prefWidth="110.0"/>
+            <Button fx:id="rentButton" text="Арендовать" onAction="#onRent"/>
+            <Button fx:id="cancelRentButton" text="Отмена аренды" onAction="#onCancelRent"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

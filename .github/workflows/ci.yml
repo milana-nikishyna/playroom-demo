@@ -25,4 +25,8 @@ jobs:
           build-scan-terms-of-use-agree: "yes"
 
       - name: Build with Gradle
-        run: ./gradlew build --scan
+        run: ./gradlew :clean :build --scan
+
+      - name: Summarize tests results
+        uses: jeantessier/test-summary-action@v1
+        if: ${{ always() }}

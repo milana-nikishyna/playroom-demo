@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/25.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="by.gsu.olaksen.controller.TableTopTabController">
+    <VBox spacing="10" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <TableView fx:id="tabletops" VBox.vgrow="ALWAYS" editable="true">
+            <columns>
+                <TableColumn fx:id="tabletopInvNum" text="Инв. номер" prefWidth="120.0"/>
+                <TableColumn fx:id="tabletopName" text="Наименование" prefWidth="200.0"/>
+            </columns>
+        </TableView>
+        <HBox spacing="10" alignment="CENTER">
+            <TextField fx:id="invNumField" promptText="Инв. номер"/>
+            <TextField fx:id="nameField" promptText="Наименование"/>
+            <Button fx:id="addButton" text="Добавить" onAction="#onAdd"/>
+            <Button fx:id="deleteButton" text="Удалить" onAction="#onDelete"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
