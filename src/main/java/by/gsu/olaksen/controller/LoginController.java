@@ -32,19 +32,7 @@ public class LoginController {
                 var sceneWithController = FXMLResourceLoader.<MainController>loadSceneWithController("main.fxml");
                 sceneWithController.controller().setUser(user);
 
-                var stage = (Stage) usernameField.getScene().getWindow();
-                stage.setTitle("Учёт");
-
-                // Разрешаем изменение размера окна для главного экрана
-                stage.setResizable(true);
-
-                // Устанавливаем размеры окна при переходе к главному экрану
-                stage.setWidth(1200);
-                stage.setHeight(800);
-                stage.setMinWidth(1000);
-                stage.setMinHeight(700);
-
-                stage.setScene(sceneWithController.scene());
+                var stage = getStage(sceneWithController);
 
                 // Центрируем окно на экране после изменения размеров
                 stage.centerOnScreen();
@@ -54,5 +42,22 @@ public class LoginController {
         } else {
             errorLabel.setText("Неверный логин или пароль");
         }
+    }
+
+    private Stage getStage(FXMLResourceLoader.SceneWithController<MainController> sceneWithController) {
+        var stage = (Stage) usernameField.getScene().getWindow();
+        stage.setTitle("Учёт");
+
+        // Разрешаем изменение размера окна для главного экрана
+        stage.setResizable(true);
+
+        // Устанавливаем размеры окна при переходе к главному экрану
+        stage.setWidth(1200);
+        stage.setHeight(800);
+        stage.setMinWidth(1000);
+        stage.setMinHeight(700);
+
+        stage.setScene(sceneWithController.scene());
+        return stage;
     }
 }

@@ -64,7 +64,7 @@ public class EquipmentTableController {
         equipmentTable.setItems(items);
 
         equipmentTable.setRowFactory(_ -> {
-            TableRow<Equipment> row = new TableRow<>();
+            var row = new TableRow<Equipment>();
             row.setOnMouseClicked(event -> {
                 if (isAdmin && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 && row.isEmpty()) {
                     addNewItem();
@@ -161,7 +161,7 @@ public class EquipmentTableController {
     @FXML
     private void onAdd() {
         if (isAdmin && addModelField.getText() != null && !addModelField.getText().isBlank()) {
-            String type = equipmentType != null ? equipmentType : "Оборудование";
+            var type = equipmentType != null ? equipmentType : "Оборудование";
             var equipment = new Equipment(addModelField.getText(), "Свободно", "", type);
             int id = repository.add(equipment);
             // сохраняем сгенерированный БД id в объекте для будущих обновлений/удалений
@@ -173,9 +173,9 @@ public class EquipmentTableController {
 
     private void addNewItem() {
         if (isAdmin) {
-            String type = equipmentType != null ? equipmentType : "Оборудование";
+            var type = equipmentType != null ? equipmentType : "Оборудование";
             var newItem = new Equipment("Новая модель", "Свободно", "", type);
-            int id = repository.add(newItem);
+            var id = repository.add(newItem);
             newItem.setId(id);
             items.add(newItem);
             equipmentTable.getSelectionModel().select(newItem);
@@ -218,7 +218,7 @@ public class EquipmentTableController {
         equipmentTable.refresh();
         updateRentControlsState();
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Аренда оборудования");
         alert.setHeaderText(null);
         alert.setContentText("Оборудование арендовано.\nЦена за час: " + pricePerHour +
@@ -246,8 +246,8 @@ public class EquipmentTableController {
 
     private void updateRentControlsState() {
         var selected = equipmentTable.getSelectionModel().getSelectedItem();
-        boolean isFree = selected != null && "Свободно".equals(selected.getStatus());
-        boolean isRented = selected != null && "В аренде".equals(selected.getStatus());
+        var isFree = selected != null && "Свободно".equals(selected.getStatus());
+        var isRented = selected != null && "В аренде".equals(selected.getStatus());
 
         // дропдаун виден и активен только для свободного оборудования
         if (rentHoursCombo != null) {
@@ -258,7 +258,7 @@ public class EquipmentTableController {
             }
         }
 
-        Integer hours = rentHoursCombo != null ? rentHoursCombo.getValue() : null;
+        var hours = rentHoursCombo != null ? rentHoursCombo.getValue() : null;
         boolean canRent = isFree && hours != null;
 
         if (rentButton != null) {

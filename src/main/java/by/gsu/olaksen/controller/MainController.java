@@ -7,13 +7,19 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -34,7 +40,7 @@ public class MainController {
      * Преобразует день недели в верхний регистр для красивого отображения
      */
     private String formatDateTimeUpperCase(LocalDateTime dateTime) {
-        String formatted = dateTime.format(DATE_TIME_FORMATTER);
+        var formatted = dateTime.format(DATE_TIME_FORMATTER);
         // Находим первые два символа (день недели) и делаем их заглавными
         if (formatted.length() >= 2) {
             return formatted.substring(0, 2).toUpperCase() + formatted.substring(2);
@@ -68,8 +74,8 @@ public class MainController {
      * Обновляет отображение даты и времени
      */
     private void updateDateTime() {
-        LocalDateTime now = LocalDateTime.now();
-        String formattedDateTime = formatDateTimeUpperCase(now);
+        var now = LocalDateTime.now();
+        var formattedDateTime = formatDateTimeUpperCase(now);
         dateTimeLabel.setText(formattedDateTime);
     }
 
@@ -104,6 +110,30 @@ public class MainController {
             logger.error("onLogout error", e);
         }
     }
+
+    @FXML
+    private void onAbout() {
+        var emailLink = new Hyperlink("milananikishyna1@gmail.com");
+        emailLink.setOnAction(_ -> {
+            try {
+                Desktop.getDesktop().mail(new URI("mailto:milananikishyna1@gmail.com"));
+            } catch (Exception ex) {
+                logger.error("Failed to open mail client", ex);
+            }
+        });
+
+        var content = new VBox(4, new Label("Разработчик: Милана Никишина"), emailLink);
+
+        var dialog = new Dialog<>();
+        dialog.setTitle("О программе");
+        dialog.setHeaderText("Playroom App");
+        dialog.initOwner(roleLabel.getScene().getWindow());
+        dialog.initModality(Modality.NONE);
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.show();
+    }
+
 
     @FXML
     private void onExit() {

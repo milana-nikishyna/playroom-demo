@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class RoomTabController {
 
@@ -58,15 +57,15 @@ public class RoomTabController {
 
     // Обновление таблицы при смене даты/комнаты
     private void updateRoomTable() {
-        LocalDate date = datePicker.getValue();
-        int roomIdx = roomTabPane.getSelectionModel().getSelectedIndex();
-        int roomNumber = roomIdx + 1; // комнаты 1..3
+        var date = datePicker.getValue();
+        var roomIdx = roomTabPane.getSelectionModel().getSelectedIndex();
+        var roomNumber = roomIdx + 1; // комнаты 1..3
 
         // по умолчанию все слоты свободны
         ObservableList<RoomBookingSlot> slots = generateSlots();
 
         // загружаем только забронированные часы из БД и помечаем их
-        List<String> bookedHours = repository.getBookedHours(roomNumber, date);
+        var bookedHours = repository.getBookedHours(roomNumber, date);
         for (RoomBookingSlot slot : slots) {
             if (bookedHours.contains(slot.getHour())) {
                 slot.setStatus("Забронировано");
@@ -78,7 +77,7 @@ public class RoomTabController {
 
     @FXML
     private void onConfirm() {
-        RoomBookingSlot selected = roomTable.getSelectionModel().getSelectedItem();
+        var selected = roomTable.getSelectionModel().getSelectedItem();
         if (selected != null && "Свободно".equals(selected.getStatus())) {
             selected.setStatus("Забронировано");
             persistSlotBooking(selected);
@@ -88,7 +87,7 @@ public class RoomTabController {
 
     @FXML
     private void onCancel() {
-        RoomBookingSlot selected = roomTable.getSelectionModel().getSelectedItem();
+        var selected = roomTable.getSelectionModel().getSelectedItem();
         if (selected != null && "Забронировано".equals(selected.getStatus())) {
             selected.setStatus("Свободно");
             removeSlotBooking(selected);
@@ -98,17 +97,17 @@ public class RoomTabController {
 
     // Сохраняет бронь конкретного слота (создаёт запись в БД только для "Забронировано")
     private void persistSlotBooking(RoomBookingSlot slot) {
-        LocalDate date = datePicker.getValue();
-        int roomIdx = roomTabPane.getSelectionModel().getSelectedIndex();
-        int roomNumber = roomIdx + 1;
+        var date = datePicker.getValue();
+        var roomIdx = roomTabPane.getSelectionModel().getSelectedIndex();
+        var roomNumber = roomIdx + 1;
         repository.bookSlot(roomNumber, date, slot.getHour());
     }
 
     // Удаляет бронь конкретного слота (удаляет запись из БД)
     private void removeSlotBooking(RoomBookingSlot slot) {
-        LocalDate date = datePicker.getValue();
-        int roomIdx = roomTabPane.getSelectionModel().getSelectedIndex();
-        int roomNumber = roomIdx + 1;
+        var date = datePicker.getValue();
+        var roomIdx = roomTabPane.getSelectionModel().getSelectedIndex();
+        var roomNumber = roomIdx + 1;
         repository.cancelSlot(roomNumber, date, slot.getHour());
     }
 }

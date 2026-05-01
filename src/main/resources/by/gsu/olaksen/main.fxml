@@ -15,7 +15,7 @@
             <MenuItem onAction="#onLogout" text="Сменить пользователя"/>
         </Menu>
         <Menu mnemonicParsing="false" text="Помощь">
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp"/>
+            <MenuItem mnemonicParsing="false" text="About Playroom App" onAction="#onAbout"/>
         </Menu>
     </MenuBar>
 

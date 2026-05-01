@@ -119,7 +119,7 @@ public class TableTopTabController {
 
     @FXML
     private void onDelete() {
-        TableTop selected = tabletops.getSelectionModel().getSelectedItem();
+        var selected = tabletops.getSelectionModel().getSelectedItem();
         if (selected != null) {
             repository.deleteTableTop(selected.getTabletopId());
             tabletops.getItems().remove(selected);
