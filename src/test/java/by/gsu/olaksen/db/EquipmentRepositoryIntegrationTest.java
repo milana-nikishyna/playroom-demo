@@ -4,6 +4,7 @@ import by.gsu.olaksen.model.Equipment;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EquipmentRepositoryIntegrationTest {
 
     private static EquipmentRepository repository;
+    private static final LocalDateTime FIXED_RENT_UNTIL = LocalDateTime.of(2026, 5, 2, 12, 0);
 
     @BeforeAll
     static void setUpRepository() {
@@ -41,7 +43,7 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should add equipment and return generated id")
     void shouldAddEquipmentAndReturnGeneratedId() {
         // Given
-        Equipment equipment = new Equipment("Xbox Series X", "Свободно", "Отличное состояние", "Console");
+        Equipment equipment = new Equipment("Xbox Series X", "Свободно", null, "Console");
         equipment.setPricePerHour(new BigDecimal("50.0"));
 
         // When
@@ -56,9 +58,9 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should retrieve all equipment")
     void shouldRetrieveAllEquipment() {
         // Given
-        Equipment equipment1 = new Equipment("PlayStation 5", "Свободно", "Хорошее", "Console");
+        Equipment equipment1 = new Equipment("PlayStation 5", "Свободно", null, "Console");
         equipment1.setPricePerHour(new BigDecimal("45.0"));
-        Equipment equipment2 = new Equipment("Gaming PC", "В аренде", "Отличное", "PC");
+        Equipment equipment2 = new Equipment("Gaming PC", "В аренде", FIXED_RENT_UNTIL, "PC");
         equipment2.setPricePerHour(new BigDecimal("75.0"));
 
         repository.add(equipment1);
@@ -90,9 +92,9 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should get equipment by type")
     void shouldGetEquipmentByType() {
         // Given
-        Equipment console1 = new Equipment("Xbox Series X", "Свободно", "Test", "Console");
-        Equipment console2 = new Equipment("PlayStation 5", "Свободно", "Test", "Console");
-        Equipment pc = new Equipment("Gaming PC", "Свободно", "Test", "PC");
+        Equipment console1 = new Equipment("Xbox Series X", "Свободно", null, "Console");
+        Equipment console2 = new Equipment("PlayStation 5", "Свободно", null, "Console");
+        Equipment pc = new Equipment("Gaming PC", "Свободно", null, "PC");
 
         repository.add(console1);
         repository.add(console2);
@@ -113,7 +115,7 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should return empty list for non-existent type")
     void shouldReturnEmptyListForNonExistentType() {
         // Given
-        Equipment equipment = new Equipment("Test", "Свободно", "Test", "Console");
+        Equipment equipment = new Equipment("Test", "Свободно", null, "Console");
         repository.add(equipment);
 
         // When
@@ -128,14 +130,14 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should update equipment")
     void shouldUpdateEquipment() {
         // Given
-        Equipment equipment = new Equipment("Original Model", "Свободно", "Original", "Console");
+        Equipment equipment = new Equipment("Original Model", "Свободно", null, "Console");
         equipment.setPricePerHour(new BigDecimal("50.0"));
         int id = repository.add(equipment);
 
         equipment.setId(id);
         equipment.setModel("Updated Model");
         equipment.setStatus("В аренде");
-        equipment.setTerm("Updated");
+        equipment.setRentUntil(FIXED_RENT_UNTIL);
         equipment.setPricePerHour(new BigDecimal("60.0"));
 
         // When
@@ -147,7 +149,7 @@ class EquipmentRepositoryIntegrationTest {
         Equipment updated = allEquipment.getFirst();
         assertThat(updated.getModel()).isEqualTo("Updated Model");
         assertThat(updated.getStatus()).isEqualTo("В аренде");
-        assertThat(updated.getTerm()).isEqualTo("Updated");
+        assertThat(updated.getRentUntil()).isEqualTo(FIXED_RENT_UNTIL);
         assertThat(updated.getPricePerHour()).isEqualTo(new BigDecimal("60.0"));
     }
 
@@ -156,7 +158,7 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should delete equipment by id")
     void shouldDeleteEquipmentById() {
         // Given
-        Equipment equipment = new Equipment("To Delete", "Свободно", "Test", "Console");
+        Equipment equipment = new Equipment("To Delete", "Свободно", null, "Console");
         int id = repository.add(equipment);
 
         // When
@@ -172,8 +174,8 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should handle status conversion correctly")
     void shouldHandleStatusConversionCorrectly() {
         // Given
-        Equipment available = new Equipment("Available", "Свободно", "Test", "Console");
-        Equipment rented = new Equipment("Rented", "В аренде", "Test", "Console");
+        Equipment available = new Equipment("Available", "Свободно", null, "Console");
+        Equipment rented = new Equipment("Rented", "В аренде", FIXED_RENT_UNTIL, "Console");
 
         repository.add(available);
         repository.add(rented);
@@ -193,7 +195,7 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should preserve price per hour with decimal precision")
     void shouldPreservePricePerHourWithDecimalPrecision() {
         // Given
-        Equipment equipment = new Equipment("Test", "Свободно", "Test", "Console");
+        Equipment equipment = new Equipment("Test", "Свободно", null, "Console");
         equipment.setPricePerHour(new BigDecimal("123.45"));
 
         // When
@@ -210,9 +212,9 @@ class EquipmentRepositoryIntegrationTest {
     @DisplayName("Should handle concurrent additions")
     void shouldHandleConcurrentAdditions() {
         // Given
-        Equipment equipment1 = new Equipment("Equipment 1", "Свободно", "Test", "Console");
-        Equipment equipment2 = new Equipment("Equipment 2", "Свободно", "Test", "PC");
-        Equipment equipment3 = new Equipment("Equipment 3", "Свободно", "Test", "VR");
+        Equipment equipment1 = new Equipment("Equipment 1", "Свободно", null, "Console");
+        Equipment equipment2 = new Equipment("Equipment 2", "Свободно", null, "PC");
+        Equipment equipment3 = new Equipment("Equipment 3", "Свободно", null, "VR");
 
         // When
         int id1 = repository.add(equipment1);
