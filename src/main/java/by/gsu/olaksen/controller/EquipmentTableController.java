@@ -10,7 +10,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 
@@ -29,7 +28,6 @@ public class EquipmentTableController {
     @FXML private Button rentButton;
     @FXML private Button cancelRentButton;
 
-    private final ObservableList<String> statuses = FXCollections.observableArrayList("Свободно", "В аренде");
     private final ObservableList<Equipment> items = FXCollections.observableArrayList();
     private boolean isAdmin = false;
     private final EquipmentRepository repository = new EquipmentRepository();
@@ -49,21 +47,10 @@ public class EquipmentTableController {
             var rentUntil = cellData.getValue().getRentUntil();
             if (rentUntil == null) return new SimpleStringProperty("");
             var formatted = rentUntil.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-            return new SimpleStringProperty("Аренда до: " + formatted);
+            return new SimpleStringProperty("до " + formatted);
         });
         priceColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.valueOf(cellData.getValue().getPricePerHour())));
-
-
-        statusColumn.setCellFactory(ComboBoxTableCell.forTableColumn(statuses));
-        statusColumn.setOnEditCommit(event -> {
-            var equipment = event.getRowValue();
-            equipment.setStatus(event.getNewValue());
-            // сохраняем изменение
-            repository.update(equipment);
-            equipmentTable.refresh();
-        });
-
         // по умолчанию: загружаем всё оборудование из БД в observable список
         items.setAll(repository.getAll());
         equipmentTable.setItems(items);
@@ -84,9 +71,6 @@ public class EquipmentTableController {
             equipment.setModel(event.getNewValue());
             repository.update(equipment);
         });
-
-        termColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        termColumn.setOnEditCommit(_ -> equipmentTable.refresh());
 
         // цена/час редактируется только админом; простое текстовое представление числа
         priceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -124,9 +108,9 @@ public class EquipmentTableController {
     public void setAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
         equipmentTable.setEditable(isAdmin);
-        statusColumn.setEditable(isAdmin);
+        statusColumn.setEditable(false);
         modelColumn.setEditable(isAdmin);
-        termColumn.setEditable(isAdmin);
+        termColumn.setEditable(false);
         // скрываем поля добавления/удаления для user
         if (addButton != null) {
             addButton.setVisible(isAdmin);
