@@ -45,7 +45,12 @@ public class EquipmentTableController {
         setUser(Session.getInstance().getUser());
         modelColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getModel()));
         statusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus()));
-        termColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTerm()));
+        termColumn.setCellValueFactory(cellData -> {
+            var rentUntil = cellData.getValue().getRentUntil();
+            if (rentUntil == null) return new SimpleStringProperty("");
+            var formatted = rentUntil.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+            return new SimpleStringProperty("Аренда до: " + formatted);
+        });
         priceColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.valueOf(cellData.getValue().getPricePerHour())));
 
@@ -81,11 +86,7 @@ public class EquipmentTableController {
         });
 
         termColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        termColumn.setOnEditCommit(event -> {
-            var equipment = event.getRowValue();
-            equipment.setTerm(event.getNewValue());
-            repository.update(equipment);
-        });
+        termColumn.setOnEditCommit(_ -> equipmentTable.refresh());
 
         // цена/час редактируется только админом; простое текстовое представление числа
         priceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -162,7 +163,7 @@ public class EquipmentTableController {
     private void onAdd() {
         if (isAdmin && addModelField.getText() != null && !addModelField.getText().isBlank()) {
             var type = equipmentType != null ? equipmentType : "Оборудование";
-            var equipment = new Equipment(addModelField.getText(), "Свободно", "", type);
+            var equipment = new Equipment(addModelField.getText(), "Свободно", null, type);
             int id = repository.add(equipment);
             // сохраняем сгенерированный БД id в объекте для будущих обновлений/удалений
             equipment.setId(id);
@@ -174,7 +175,7 @@ public class EquipmentTableController {
     private void addNewItem() {
         if (isAdmin) {
             var type = equipmentType != null ? equipmentType : "Оборудование";
-            var newItem = new Equipment("Новая модель", "Свободно", "", type);
+            var newItem = new Equipment("Новая модель", "Свободно", null, type);
             var id = repository.add(newItem);
             newItem.setId(id);
             items.add(newItem);
@@ -210,9 +211,8 @@ public class EquipmentTableController {
         var total = pricePerHour.multiply(BigDecimal.valueOf(hours));
 
         selected.setStatus("В аренде");
-        var endTime = java.time.LocalDateTime.now().plusHours(hours);
-        var formatter = java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        selected.setTerm("до " + endTime.format(formatter));
+        var rentUntil = java.time.LocalDateTime.now().plusHours(hours);
+        selected.setRentUntil(rentUntil);
 
         repository.update(selected);
         equipmentTable.refresh();
@@ -238,7 +238,7 @@ public class EquipmentTableController {
         }
 
         selected.setStatus("Свободно");
-        selected.setTerm("");
+        selected.setRentUntil(null);
         repository.update(selected);
         equipmentTable.refresh();
         updateRentControlsState();

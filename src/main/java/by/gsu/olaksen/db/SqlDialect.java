@@ -47,7 +47,7 @@ class H2SqlDialect implements SqlDialect {
                     id INTEGER PRIMARY KEY AUTO_INCREMENT,
                     model VARCHAR(255) NOT NULL,
                     available BOOLEAN NOT NULL,
-                    notes VARCHAR(255),
+                    rent_until TEXT,
                     type VARCHAR(50) NOT NULL,
                     price_per_hour VARCHAR(50) DEFAULT '0'
                 )
@@ -90,7 +90,7 @@ class SqliteSqlDialect implements SqlDialect {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     model VARCHAR(255) NOT NULL,
                     available BOOLEAN NOT NULL,
-                    notes VARCHAR(255),
+                    rent_until TEXT,
                     type VARCHAR(50) NOT NULL,
                     price_per_hour TEXT DEFAULT '0'
                 )
@@ -133,7 +133,7 @@ class PostgresSqlDialect implements SqlDialect {
                     id SERIAL PRIMARY KEY,
                     model VARCHAR(255) NOT NULL,
                     available BOOLEAN NOT NULL,
-                    notes VARCHAR(255),
+                    rent_until TEXT,
                     type VARCHAR(50) NOT NULL,
                     price_per_hour VARCHAR(50) DEFAULT '0'
                 )
