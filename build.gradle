@@ -1,5 +1,3 @@
-import java.sql.DriverManager
-
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
@@ -60,12 +58,11 @@ tasks.register('loadTestData') {
         }
         def sql = sqlFile.text
 
-        // Загружаем JDBC-драйвер из classpath проекта
+        // Загружаем JDBC-драйвер из classpath проекта напрямую (без DriverManager)
         def urls = configurations.runtimeClasspath.collect { it.toURI().toURL() } as URL[]
         def loader = new URLClassLoader(urls, ClassLoader.systemClassLoader)
-        Thread.currentThread().contextClassLoader = loader
-        loader.loadClass('org.sqlite.JDBC').newInstance()
-        def conn = DriverManager.getConnection('jdbc:sqlite:sample.db')
+        def driver = loader.loadClass('org.sqlite.JDBC').getDeclaredConstructor().newInstance() as java.sql.Driver
+        def conn = driver.connect('jdbc:sqlite:sample.db', new Properties())
 
         def stmt = conn.createStatement()
         sql.split(';').each { line ->
