@@ -109,16 +109,16 @@ users:
 
 ### Загрузка тестовых данных
 
-Для добавления данных в БД выполните команду в терминале:
+Для добавления данных в БД используйте Gradle-задачу (работает на macOS, Linux и Windows без установки sqlite3):
 
 ```bash
-sqlite3 sample.db < insert_test_data.sql
+./gradlew loadTestData
 ```
 
 Для Windows:
 
 ```cmd
-Get-Content insert_test_data.sql | sqlite3 sample.db
+gradlew.bat loadTestData
 ```
 
 ## Логирование

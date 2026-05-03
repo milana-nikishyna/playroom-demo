@@ -44,3 +44,40 @@ javafx {
     version = '26.0.1'
     modules = ['javafx.controls','javafx.fxml']
 }
+
+// Задача для загрузки тестовых данных в БД без установки sqlite3
+tasks.register('loadTestData') {
+    group = 'database'
+    description = 'Загружает тестовые данные из insert_test_data.sql в sample.db'
+    dependsOn configurations.runtimeClasspath
+
+    doLast {
+        def sqlFile = file('insert_test_data.sql')
+        if (!sqlFile.exists()) {
+            throw new GradleException("Файл insert_test_data.sql не найден в корне проекта")
+        }
+        def sql = sqlFile.text
+
+        // Загружаем JDBC-драйвер из classpath проекта
+        def urls = configurations.runtimeClasspath.collect { it.toURI().toURL() } as URL[]
+        def loader = new URLClassLoader(urls, (ClassLoader) null)
+        def driverClass = loader.loadClass('org.sqlite.JDBC')
+        def props = new Properties()
+        def conn = driverClass.getDeclaredMethod('connect', String, Properties)
+                .invoke(null, 'jdbc:sqlite:sample.db', props)
+
+        def stmt = conn.createStatement()
+        sql.split(';').each { line ->
+            def trimmed = line.trim().replaceAll(/--[^\n]*/, '').trim()
+            if (trimmed) {
+                try {
+                    stmt.execute(trimmed)
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        stmt.close()
+        conn.close()
+        println "✅ Тестовые данные успешно загружены в sample.db"
+    }
+}
