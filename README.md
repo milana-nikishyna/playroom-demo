@@ -115,6 +115,12 @@ users:
 sqlite3 sample.db < insert_test_data.sql
 ```
 
+Для Windows:
+
+```cmd
+Get-Content insert_test_data.sql | sqlite3 sample.db
+```
+
 ## Логирование
 
 Логи приложения сохраняются в файл `playroom-demo.log` в корневой директории проекта.
