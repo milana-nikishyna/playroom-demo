@@ -54,28 +54,71 @@ tasks.register('loadTestData') {
     doLast {
         def sqlFile = file('insert_test_data.sql')
         if (!sqlFile.exists()) {
-            throw new GradleException("Файл insert_test_data.sql не найден в корне проекта")
+            throw new GradleException("insert_test_data.sql not found in project root: ${projectDir}")
         }
-        def sql = sqlFile.text
+        // Явно читаем в UTF-8 (важно на Windows)
+        def sql = sqlFile.getText('UTF-8')
+        println "[INFO] SQL file size: ${sql.length()} chars"
 
-        // Загружаем JDBC-драйвер из classpath проекта напрямую (без DriverManager)
+        def dbFile = file('sample.db').absolutePath
+        println "[INFO] Using DB: ${dbFile}"
+
         def urls = configurations.runtimeClasspath.collect { it.toURI().toURL() } as URL[]
         def loader = new URLClassLoader(urls, ClassLoader.systemClassLoader)
         def driver = loader.loadClass('org.sqlite.JDBC').getDeclaredConstructor().newInstance() as java.sql.Driver
-        def conn = driver.connect('jdbc:sqlite:sample.db', new Properties())
+        def conn = driver.connect("jdbc:sqlite:${dbFile}", new Properties())
+        conn.setAutoCommit(false)
 
         def stmt = conn.createStatement()
-        sql.split(';').each { line ->
-            def trimmed = line.trim().replaceAll(/--[^\n]*/, '').trim()
-            if (trimmed) {
+        // Создаём таблицы если их нет (аналог initDb в репозиториях)
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS equipment (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                model VARCHAR(255) NOT NULL,
+                available BOOLEAN NOT NULL,
+                rent_until TEXT,
+                type VARCHAR(50) NOT NULL,
+                price_per_hour TEXT DEFAULT '0'
+            )""")
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS tabletops (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                inv_num INTEGER NOT NULL,
+                name VARCHAR(255) NOT NULL
+            )""")
+        stmt.execute("""
+            CREATE TABLE IF NOT EXISTS room_booking (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                room_number INTEGER NOT NULL,
+                booking_date TEXT NOT NULL,
+                hour VARCHAR(10) NOT NULL,
+                status VARCHAR(20) NOT NULL
+            )""")
+        println "[INFO] Tables ready"
+        int success = 0
+        int failed = 0
+        // Убираем комментарии и разбиваем по ;
+        def cleaned = sql.replaceAll(/(?m)--[^\r\n]*/, '').replaceAll(/\r\n/, '\n')
+        cleaned.split(';').each { chunk ->
+            def trimmed = chunk.trim()
+            if (trimmed && trimmed.toUpperCase().startsWith('INSERT')) {
                 try {
                     stmt.execute(trimmed)
-                } catch (Exception ignored) {
+                    success++
+                } catch (Exception e) {
+                    failed++
+                    println "[WARN] Failed: ${trimmed.take(80)} => ${e.message}"
                 }
             }
         }
+        conn.commit()
+        // Проверяем сколько реально записей в таблицах
+        def rs1 = stmt.executeQuery("SELECT COUNT(*) FROM equipment")
+        def rs2 = stmt.executeQuery("SELECT COUNT(*) FROM tabletops")
+        println "[CHECK] equipment rows: ${rs1.getInt(1)}, tabletops rows: ${rs2.getInt(1)}"
+        rs1.close(); rs2.close()
         stmt.close()
         conn.close()
-        println "✅ Тестовые данные успешно загружены в sample.db"
+        println "[OK] Done: ${success} statements OK, ${failed} failed."
     }
 }
